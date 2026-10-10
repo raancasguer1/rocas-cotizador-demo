@@ -2,7 +2,7 @@
 
 ## Estado
 
-El flujo de cotización compartida y conversación sigue separado del flujo de presupuestos reales. El servidor solo admite cotizaciones con marcadores DEMO; no se deben enviar estos enlaces a clientes reales. La app principal conserva sus cotizaciones, historial, tarifas y respaldos. Sus cambios PWA (icono instalable y apertura independiente) son aparte de este flujo de prueba.
+El flujo de cotización compartida y conversación sigue separado del flujo de presupuestos reales. El servidor solo admite cotizaciones con marcadores DEMO; no se deben enviar estos enlaces a clientes reales. La app principal conserva sus cotizaciones, historial, tarifas y respaldos. El botón “Cliente–proveedor · DEMO” del cotizador solo abre el panel aislado; todavía no toma ni modifica presupuestos guardados. Sus cambios PWA (icono instalable y apertura independiente) son aparte de este flujo de prueba.
 
 La prueba incluye un enlace privado por cotización/revisión, una página de cliente sin cuenta y un hilo persistente de mensajes entre cliente y ROCAS. Las respuestas formales (consulta, cambio, aceptación o rechazo) permanecen separadas de los mensajes del hilo. El panel del propietario refresca los mensajes automáticamente; los mensajes y respuestas quedan ligados al mismo folio y revisión.
 
@@ -19,6 +19,7 @@ Los enlaces vencen a los 30 días y pueden revocarse. Mientras esté activo, el 
 
 ## Archivos principales
 
+- `index.html`: acceso aditivo “Cliente–proveedor · DEMO”; no cambia el historial ni el estado del cotizador.
 - `cliente.html`: vista de cliente, respuestas formales y conversación.
 - `portal-prueba.html`: panel ROCAS para crear enlaces ficticios, revisar respuestas y responder en el hilo.
 - `supabase/functions/rocas-client-share/index.ts`: operaciones protegidas de compartir, consultar, responder, mensajes y revocación.
