@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<title>ROCAS · Cotización para cliente</title>
+<style>
+:root{--green:#145b55;--navy:#173b3a;--ink:#24312e;--muted:#64736e;--bg:#f3f6f4;--line:#dce5e0;--white:#fff;--mint:#e8f4f0;--gold:#8d641a;--pale:#fff6e3;--red:#9b3f37}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.48 system-ui,-apple-system,"Segoe UI",sans-serif}.bar{background:var(--navy);color:white;padding:18px 20px}.brand{max-width:720px;margin:auto;font-weight:900;font-size:20px;letter-spacing:.05em}.brand small{display:block;color:#c7ddd7;font-size:11px;font-weight:500;letter-spacing:0}.wrap{max-width:720px;margin:22px auto;padding:0 15px}.card{background:white;border:1px solid var(--line);border-radius:15px;padding:20px;margin-bottom:14px;box-shadow:0 8px 24px rgba(21,58,52,.06)}.tag{display:inline-block;background:var(--mint);color:var(--green);border-radius:99px;padding:5px 9px;font-size:10px;font-weight:900;letter-spacing:.04em}.title{font-size:22px;line-height:1.2;color:var(--navy);margin:12px 0 4px}.muted{color:var(--muted);font-size:13px}.details{display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#f8faf8;border-radius:10px;padding:12px;margin:15px 0}.detail b{display:block;color:var(--muted);font-size:10px;text-transform:uppercase}.detail span{font-size:13px;overflow-wrap:anywhere}.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;margin:12px 0}th,td{text-align:left;padding:10px 7px;border-bottom:1px solid var(--line);vertical-align:top;font-size:12px}th{font-size:10px;color:var(--muted);text-transform:uppercase}td:last-child,th:last-child{text-align:right}.total{display:flex;justify-content:space-between;gap:12px;background:var(--mint);border-radius:10px;padding:13px;margin-top:12px;color:var(--green)}.total span{font-size:12px;font-weight:800}.total strong{font-size:15px;color:var(--navy);text-align:right}.notice{background:var(--pale);color:#6e541d;border-radius:10px;padding:12px;font-size:11px;margin-top:13px}.btn{width:100%;border:1px solid var(--green);border-radius:9px;padding:12px 13px;background:var(--green);color:white;font-weight:850;font-size:14px;cursor:pointer;margin:5px 0}.btn.alt{background:white;color:var(--green)}.btn.red{background:white;color:var(--red);border-color:#e2c6c3}.btn:disabled{opacity:.5;cursor:not-allowed}.form{display:none;background:#f8faf8;border:1px solid var(--line);border-radius:11px;padding:14px;margin-top:14px}.form.show{display:block}.form label{display:block;font-size:12px;font-weight:800;margin:8px 0 5px}.form input,.form textarea{width:100%;padding:11px;border:1px solid #cbd8d2;border-radius:8px;font:inherit;font-size:13px}.form textarea{min-height:90px;resize:vertical}.status{display:none;margin-top:14px;padding:12px;border-radius:10px;font-size:13px;font-weight:800}.status.show{display:block}.status.ok{background:var(--mint);color:var(--green)}.status.bad{background:#fbeeed;color:var(--red)}.loading{color:var(--muted);text-align:center;padding:30px}.footer{text-align:center;font-size:11px;color:var(--muted);padding:8px 12px 25px}.hidden{display:none!important}@media(max-width:520px){.wrap{margin:14px auto}.card{padding:16px}.title{font-size:20px}.details{grid-template-columns:1fr}.tablewrap{margin:0 -6px}}
+</style>
+</head>
+<body>
+<header class="bar"><div class="brand">ROCAS<small>Cotización compartida contigo</small></div></header>
+<main class="wrap">
+  <section id="loading" class="card loading">Cargando la cotización…</section>
+  <section id="errorCard" class="card hidden"><span class="tag">ENLACE NO DISPONIBLE</span><h1 class="title">No podemos abrir esta cotización</h1><p id="errorText" class="muted">Verifica que el enlace esté completo o pide uno nuevo a ROCAS.</p></section>
+  <section id="quoteCard" class="card hidden">
+    <span class="tag">COTIZACIÓN · <span id="quoteRef"></span></span>
+    <h1 class="title" id="project"></h1>
+    <div class="details"><div class="detail"><b>Cliente</b><span id="clientName"></span></div><div class="detail"><b>Fecha</b><span id="quoteDate"></span></div><div class="detail"><b>Versión</b><span id="quoteRevision"></span></div><div class="detail"><b>Lugar de obra</b><span id="workLocation"></span></div></div>
+    <h2 style="font-size:15px;color:var(--navy);margin-bottom:4px">Alcance del trabajo</h2>
+    <div class="tablewrap"><table><thead><tr><th>Actividad</th><th>Cantidad</th><th>Valor</th></tr></thead><tbody id="lineItems"></tbody></table></div>
+    <div class="total"><span>TOTAL MANO DE OBRA</span><strong id="quoteTotal"></strong></div>
+    <p id="scopeNotes" class="muted hidden"></p>
+    <div class="notice" id="notice"></div>
+  </section>
+  <section id="responseCard" class="card hidden">
+    <h2 style="font-size:17px;color:var(--navy);margin:0 0 4px">¿Qué quieres hacer?</h2>
+    <p class="muted" style="margin:0 0 12px">Tu respuesta quedará asociada a esta cotización para que ROCAS pueda darle seguimiento.</p>
+    <button class="btn" data-kind="accepted" type="button">Aceptar cotización</button>
+    <button class="btn alt" data-kind="change_request" type="button">Pedir un cambio</button>
+    <button class="btn alt" data-kind="question" type="button">Hacer una consulta</button>
+    <button class="btn red" data-kind="rejected" type="button">No aceptar</button>
+    <div id="responseForm" class="form"><label for="respondentName">Tu nombre</label><input id="respondentName" maxlength="120" autocomplete="name" placeholder="Nombre de quien responde"><label for="message" id="messageLabel">Mensaje</label><textarea id="message" maxlength="2000" placeholder="Escribe tu consulta o el cambio que necesitas"></textarea><button id="sendBtn" class="btn" type="button">Enviar respuesta</button><button id="cancelBtn" class="btn alt" type="button">Cancelar</button></div>
+    <div id="responseStatus" class="status"></div>
+  </section>
+  <div class="footer">Enlace de una sola cotización · ROCAS</div>
+</main>
+<script>
+const API='https://znveievywohgvqvsqtim.supabase.co/functions/v1/rocas-client-share';
+const PUBLIC_KEY='sb_publishable_52Db1WOmMQviCoAmP1S7tA_8UPzw_tP';
+const $=id=>document.getElementById(id);
+let shareToken='';let chosenType='';
+function setError(message){$('loading').classList.add('hidden');$('quoteCard').classList.add('hidden');$('responseCard').classList.add('hidden');$('errorCard').classList.remove('hidden');$('errorText').textContent=message}
+function showStatus(text,ok=true){const s=$('responseStatus');s.textContent=text;s.className='status show '+(ok?'ok':'bad')}
+function safeText(v){return typeof v==='string'?v:''}
+async function api(payload){const r=await fetch(API,{method:'POST',headers:{'apikey':PUBLIC_KEY,'Content-Type':'application/json'},body:JSON.stringify(payload),cache:'no-store'});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'No se pudo completar la solicitud.');return data}
+function renderQuote(q){
+  $('quoteRef').textContent=safeText(q.quoteNumber);
+  $('project').textContent=safeText(q.project)||'Proyecto';
+  $('clientName').textContent=safeText(q.clientName)||'Cliente';
+  $('quoteDate').textContent=safeText(q.date)||'—';
+  $('quoteRevision').textContent=String(q.revision||1);
+  $('workLocation').textContent=safeText(q.workLocation)||'—';
+  $('quoteTotal').textContent='COP '+Number(q.laborTotal||0).toLocaleString('es-CO');
+  $('notice').textContent=safeText(q.notice)||'Presupuesto de mano de obra.';
+  const notes=safeText(q.scopeNotes);$('scopeNotes').textContent=notes;$('scopeNotes').classList.toggle('hidden',!notes);
+  const body=$('lineItems');body.replaceChildren();
+  for(const item of (Array.isArray(q.items)?q.items:[])){
+    const tr=document.createElement('tr');const activity=document.createElement('td');const title=document.createElement('strong');title.textContent=safeText(item.name);const code=document.createElement('div');code.className='muted';code.textContent=[safeText(item.code),safeText(item.unit)].filter(Boolean).join(' · ');activity.append(title,code);const qty=document.createElement('td');qty.textContent=String(item.quantity??'');const value=document.createElement('td');value.textContent='COP '+Number(item.lineTotal||0).toLocaleString('es-CO');tr.append(activity,qty,value);body.append(tr);
+  }
+  $('loading').classList.add('hidden');$('errorCard').classList.add('hidden');$('quoteCard').classList.remove('hidden');$('responseCard').classList.remove('hidden');
+}
+document.querySelectorAll('[data-kind]').forEach(button=>button.addEventListener('click',()=>{
+  if(!shareToken){showStatus('Este enlace no está disponible.',false);return}
+  chosenType=button.dataset.kind;$('responseForm').classList.add('show');$('message').value='';$('respondentName').value='';
+  const required=chosenType==='question'||chosenType==='change_request';$('message').required=required;$('messageLabel').textContent=required?'Consulta o cambio que solicitas':'Mensaje opcional';$('message').placeholder=required?'Escribe aquí tu mensaje':'Si quieres, agrega un comentario';$('respondentName').focus();
+}));
+$('cancelBtn').addEventListener('click',()=>{$('responseForm').classList.remove('show');chosenType=''});
+$('sendBtn').addEventListener('click',async()=>{
+  const respondentName=$('respondentName').value.trim(),message=$('message').value.trim();
+  if(!respondentName){showStatus('Escribe tu nombre para continuar.',false);$('respondentName').focus();return}
+  if((chosenType==='question'||chosenType==='change_request')&&!message){showStatus('Escribe tu consulta o el cambio solicitado.',false);$('message').focus();return}
+  $('sendBtn').disabled=true;$('sendBtn').textContent='Enviando…';
+  try{await api({action:'respond',token:shareToken,responseType:chosenType,respondentName,message});$('responseForm').classList.remove('show');document.querySelectorAll('[data-kind]').forEach(b=>b.disabled=true);showStatus('Tu respuesta quedó registrada. ROCAS podrá verla en el panel de esta cotización.');}
+  catch(e){showStatus(e.message||'No se pudo enviar la respuesta.',false)}
+  finally{$('sendBtn').disabled=false;$('sendBtn').textContent='Enviar respuesta'}
+});
+async function init(){
+  const hash=new URLSearchParams(location.hash.replace(/^#/,''));shareToken=hash.get('token')||sessionStorage.getItem('rocas_client_share_token')||'';
+  if(!shareToken){setError('El enlace no contiene un acceso válido. Pide a ROCAS que te comparta la cotización otra vez.');return}
+  sessionStorage.setItem('rocas_client_share_token',shareToken);
+  // Fragment tokens are not sent to GitHub Pages; remove from the address after saving in this tab.
+  if(location.hash){history.replaceState({},'',location.pathname+location.search)}
+  try{const result=await api({action:'view',token:shareToken});if(!result.quote||!Array.isArray(result.quote.items)){setError('No encontramos los datos de esta cotización.');return}renderQuote(result.quote)}
+  catch(e){setError(e.message||'No se pudo abrir el enlace. Pide uno nuevo a ROCAS.')}
+}
+init();
+</script>
+</body>
+</html>
