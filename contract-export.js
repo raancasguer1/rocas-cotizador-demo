@@ -52,22 +52,20 @@
     const body=[];
     body.push(para([run('CONTRATO DE OBRA',{bold:true,size:34})],{align:'center',after:80}));
     body.push(para([run('BORRADOR · PENDIENTE DE REVISIÓN',{bold:true,color:'9B3F37',size:24})],{align:'center',after:120}));
-    body.push(para([run('Documento generado para revisión interna de ROCAS. No es un contrato final ni una firma electrónica.',{bold:true,color:'9B3F37'})],{align:'center',after:180}));
+    body.push(para([run('Borrador de prueba · revisar antes de cualquier uso.',{bold:true,color:'9B3F37'})],{align:'center',after:120}));
     body.push(para([run('Cotización vinculada: ',{bold:true}),run(String(model.quoteNumber||'POR COMPLETAR')+' · Revisión '+String(model.revision||'POR COMPLETAR'))]));
     body.push(para([run('Cliente en la cotización: ',{bold:true}),run(String(model.quoteClient||'POR COMPLETAR'))]));
     body.push(para([run('Proyecto: ',{bold:true}),run(String(model.project||'POR COMPLETAR'))]));
     body.push(para([run('Valor de mano de obra: ',{bold:true}),run(String(model.laborTotal||'POR COMPLETAR'))]));
     body.push(para([run('Generado: ',{bold:true}),run(String(model.generatedAt||''))],{after:180}));
-    body.push(para([run('Cotización de origen · solo lectura',{bold:true,size:26})],{keepNext:true,after:80}));
-    body.push(para([run('Este borrador queda ligado únicamente a la revisión ficticia indicada arriba. El alcance y el valor de referencia son de prueba y no modifican la cotización de origen.')]));
-    body.push(para([run('Presupuesto solo de mano de obra. Los materiales, equipos, transporte, disposición de escombros, AIU, impuestos y otros costos solo se incluyen si se indican expresamente por separado.',{bold:true})],{after:180}));
+    body.push(para([run('Referencia ficticia de solo lectura; no modifica la cotización de origen.')],{after:120}));
     for(const section of (model.sections||[])){
       body.push(para([run(section.title,{bold:true,size:26})],{keepNext:true,after:80}));
       for(const row of (section.rows||[]))body.push(para([run(row.label+': ',{bold:true}),run(row.value||'POR COMPLETAR')]));
       body.push(para([run('')],{after:80}));
     }
     body.push(para([run('AVISO: BORRADOR · NO FIRMAR',{bold:true,color:'9B3F37',size:24})],{align:'center',after:80}));
-    body.push(para([run('La aceptación registrada en la aplicación no es firma electrónica, aprobación legal ni orden de obra. Los campos vacíos se muestran como POR COMPLETAR y requieren revisión de ROCAS antes de cualquier uso.')],{after:120}));
+    body.push(para([run('La aceptación en la app no es firma electrónica, aprobación legal ni orden de obra. Los campos vacíos: POR COMPLETAR.')],{after:100}));
     const docXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="'+W+'"><w:body>'+body.join('')+'<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="567" w:footer="567" w:gutter="0"/></w:sectPr></w:body></w:document>';
     const contentTypes='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="'+CT+'"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
     const rels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="'+REL+'"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
