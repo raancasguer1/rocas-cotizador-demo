@@ -9,7 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--green:#145b55;--navy:#173b3a;--ink:#24312e;--muted:#64736e;--bg:#f3f6f4;--line:#dce5e0;--white:#fff;--mint:#e8f4f0;--gold:#8d641a;--pale:#fff6e3;--red:#9b3f37}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}.bar{background:var(--navy);color:#fff;padding:17px 20px}.brand{max-width:760px;margin:auto;font-weight:900;font-size:20px;letter-spacing:.04em}.brand small{display:block;color:#c7ddd7;font-size:11px;font-weight:500;letter-spacing:0}.wrap{max-width:760px;margin:22px auto;padding:0 15px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:19px;margin-bottom:14px;box-shadow:0 8px 24px rgba(21,58,52,.06)}.tag{display:inline-block;background:var(--pale);color:var(--gold);border-radius:99px;padding:5px 9px;font-size:10px;font-weight:900;letter-spacing:.04em}.title{font-size:22px;line-height:1.2;color:var(--navy);margin:11px 0 5px}.muted{color:var(--muted);font-size:13px}.btn{border:1px solid var(--green);border-radius:9px;padding:11px 14px;background:var(--green);color:#fff;font-weight:850;font-size:13px;cursor:pointer;margin:5px 6px 5px 0}.btn.alt{background:#fff;color:var(--green)}.btn.danger{background:#fff;color:var(--red);border-color:#e2c6c3}.btn:disabled{opacity:.45;cursor:not-allowed}.status{display:inline-block;background:var(--mint);color:var(--green);border-radius:99px;padding:6px 10px;font-size:11px;font-weight:850}.notice{background:var(--blue,#eaf2fc);border-radius:10px;padding:12px;font-size:12px;color:#294c75;margin-top:12px}.result{margin-top:12px;padding:12px;background:#f8faf8;border:1px solid var(--line);border-radius:10px;display:none;overflow-wrap:anywhere}.result.show{display:block}.result a{color:var(--green);font-weight:800;word-break:break-all}.list{display:grid;gap:9px;margin-top:12px}.item{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fbfcfb}.item strong{color:var(--navy)}.actions{margin-top:10px}.small{font-size:11px;color:var(--muted);margin-top:6px}.login-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-top:8px}.login-row input{flex:1;min-width:190px;border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit}.error{color:var(--red)}.hidden{display:none!important}.footer{text-align:center;color:var(--muted);font-size:11px;padding:5px 10px 24px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}.bar{background:var(--navy);color:#fff;padding:17px 20px}.brand{max-width:760px;margin:auto;font-weight:900;font-size:20px;letter-spacing:.04em}.brand small{display:block;color:#c7ddd7;font-size:11px;font-weight:500;letter-spacing:0}.wrap{max-width:760px;margin:22px auto;padding:0 15px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:19px;margin-bottom:14px;box-shadow:0 8px 24px rgba(21,58,52,.06)}.tag{display:inline-block;background:var(--pale);color:var(--gold);border-radius:99px;padding:5px 9px;font-size:10px;font-weight:900;letter-spacing:.04em}.title{font-size:22px;line-height:1.2;color:var(--navy);margin:11px 0 5px}.muted{color:var(--muted);font-size:13px}.btn{border:1px solid var(--green);border-radius:9px;padding:11px 14px;background:var(--green);color:#fff;font-weight:850;font-size:13px;cursor:pointer;margin:5px 6px 5px 0}.btn.alt{background:#fff;color:var(--green)}.btn.danger{background:#fff;color:var(--red);border-color:#e2c6c3}.btn:disabled{opacity:.45;cursor:not-allowed}.status{display:inline-block;background:var(--mint);color:var(--green);border-radius:99px;padding:6px 10px;font-size:11px;font-weight:850}.notice{background:var(--blue,#eaf2fc);border-radius:10px;padding:12px;font-size:12px;color:#294c75;margin-top:12px}.result{margin-top:12px;padding:12px;background:#f8faf8;border:1px solid var(--line);border-radius:10px;display:none;overflow-wrap:anywhere}.result.show{display:block}.result a{color:var(--green);font-weight:800;word-break:break-all}.list{display:grid;gap:9px;margin-top:12px}.item{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fbfcfb}.item strong{color:var(--navy)}.actions{margin-top:10px}.small{font-size:11px;color:var(--muted);margin-top:6px}.login-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-top:8px}.login-row input{flex:1;min-width:190px;border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit}.error{color:var(--red)}.hidden{display:none!important}.footer{text-align:center;color:var(--muted);font-size:11px;padding:5px 10px 24px}.thread{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}.thread-log{display:grid;gap:7px;max-height:240px;overflow:auto;margin:8px 0}.thread-msg{padding:9px;background:#f4f7f5;border:1px solid var(--line);border-radius:9px}.thread-msg.owner{background:var(--mint);border-color:#c9e2d7}.thread-meta{font-size:10px;color:var(--muted);font-weight:800;margin-bottom:3px}.thread-text{font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}.thread-form textarea{width:100%;min-height:65px;padding:9px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:12px;resize:vertical}
 </style>
 </head>
 <body>
@@ -22,13 +22,13 @@
   <div id="authStatus" class="status">Verificando sesión…</div>
   <div id="authHelp" class="small">Comprobando la sesión de este navegador.</div>
   <div id="loginBox" class="small hidden"><label for="loginEmail">Si no reconoce la sesión, pide un enlace de acceso al correo de tu cuenta ROCAS. No se enviará hasta que pulses el botón.</label><div class="login-row"><input id="loginEmail" type="email" autocomplete="email" placeholder="Correo de acceso"><button id="loginBtn" class="btn alt" type="button">Enviar enlace de acceso</button></div></div>
-  <div class="actions"><button id="createBtn" class="btn" type="button" disabled>Crear enlace ficticio</button><button id="refreshBtn" class="btn alt" type="button" disabled>Ver respuesta del cliente</button><button id="retrySessionBtn" class="btn alt hidden" type="button">Reintentar sesión</button></div>
+  <div class="actions"><button id="createBtn" class="btn" type="button" disabled>Crear enlace ficticio</button><button id="refreshBtn" class="btn alt" type="button" disabled>Actualizar mensajes y respuestas</button><button id="retrySessionBtn" class="btn alt hidden" type="button">Reintentar sesión</button></div>
   <div id="shareResult" class="result"></div>
   <div id="feedback" class="small"></div>
   <div class="notice">El enlace abre únicamente una cotización ficticia de prueba. No lo envíes a clientes. Revoca el enlace al terminar.</div>
 </section>
 <section class="card">
-  <h2 style="font-size:16px;color:var(--navy);margin:0">Respuestas de demostración</h2>
+  <h2 style="font-size:16px;color:var(--navy);margin:0">Conversaciones de demostración</h2><p class="muted">Mensajes del cliente y respuestas de ROCAS quedan guardados por cotización y revisión.</p>
   <div id="responseList" class="list"><div class="muted">Inicia sesión en el cotizador ROCAS para revisar el estado.</div></div>
 </section>
 <div class="footer">Sincronización de prueba · no se leen ni modifican las cotizaciones guardadas</div>
@@ -73,12 +73,24 @@ $('createBtn').addEventListener('click',async()=>{
   finally{$('createBtn').disabled=false}
 });
 $('refreshBtn').addEventListener('click',refreshShares);
+function renderOwnerThread(share,rows){
+  const box=document.createElement('div');box.className='thread';
+  const heading=document.createElement('strong');heading.textContent='Hilo de mensajes';box.append(heading);
+  const log=document.createElement('div');log.className='thread-log';log.setAttribute('role','log');log.setAttribute('aria-live','polite');
+  if(!rows.length){const empty=document.createElement('div');empty.className='small';empty.textContent='Aún no hay mensajes. Puedes iniciar la conversación aquí.';log.append(empty)}
+  for(const item of rows){const bubble=document.createElement('div');bubble.className='thread-msg'+(item.sender_type==='owner'?' owner':'');const meta=document.createElement('div');meta.className='thread-meta';const stamp=Date.parse(item.created_at||'');meta.textContent=(item.sender_type==='owner'?'ROCAS':item.sender_name||'Cliente')+(Number.isFinite(stamp)?' · '+new Date(stamp).toLocaleString('es-CO',{dateStyle:'short',timeStyle:'short'}):'');const text=document.createElement('div');text.className='thread-text';text.textContent=item.message||'';bubble.append(meta,text);log.append(bubble)}
+  box.append(log);
+  const active=!share.revoked_at&&Date.parse(share.expires_at)>Date.now();
+  if(active){const form=document.createElement('div');form.className='thread-form';const input=document.createElement('textarea');input.maxLength=2000;input.placeholder='Escribe una respuesta para el cliente…';const send=document.createElement('button');send.className='btn alt';send.type='button';send.textContent='Responder como ROCAS';send.addEventListener('click',async()=>{const message=input.value.trim();if(!message){feedback('Escribe un mensaje antes de responder.',true);input.focus();return}send.disabled=true;send.textContent='Enviando…';try{await callApi({action:'owner-message',shareId:share.id,message});input.value='';feedback('Mensaje enviado a la conversación de prueba.');await refreshShares()}catch(e){feedback(e.message||'No se pudo enviar el mensaje.',true)}finally{send.disabled=false;send.textContent='Responder como ROCAS'}});form.append(input,send);box.append(form)}
+  else{const note=document.createElement('div');note.className='small';note.textContent='El enlace está vencido o revocado. El historial se conserva, pero no se puede seguir escribiendo desde ese enlace.';box.append(note)}
+  return box;
+}
 async function refreshShares(){
   if(!session)return;
   try{
     const d=await callApi({action:'owner-list'});const rows=(d.shares||[]).filter(s=>String(s.quote_number||'').startsWith('ROCAS-DEMO-'));const host=$('responseList');host.replaceChildren();
     if(!rows.length){const empty=document.createElement('div');empty.className='muted';empty.textContent='Aún no hay cotizaciones ficticias compartidas.';host.append(empty);return}
-    const resp=d.responses||[];
+    const resp=d.responses||[];const messages=d.messages||[];
     rows.forEach(s=>{
       const card=document.createElement('div');card.className='item';
       const title=document.createElement('strong');title.textContent=s.quote_number+' · revisión '+s.quote_revision;
@@ -86,6 +98,7 @@ async function refreshShares(){
       const related=resp.filter(r=>r.share_id===s.id);
       if(related.length){related.forEach(r=>{const line=document.createElement('div');line.className='small';const labels={accepted:'Aceptó',change_request:'Pidió un cambio',question:'Hizo una consulta',rejected:'No aceptó'};line.textContent=(labels[r.response_type]||'Respuesta')+' · '+r.respondent_name+(r.message?': '+r.message:'');card.append(line)})}
       else{const none=document.createElement('div');none.className='small';none.textContent='Sin respuesta todavía.';card.append(none)}
+      card.append(renderOwnerThread(s,messages.filter(m=>m.share_id===s.id)));
       if(s.quote_number==='ROCAS-DEMO-2026-001'&&Number(s.quote_revision)===1&&related.some(r=>r.response_type==='accepted')){const draft=document.createElement('a');draft.className='btn alt';draft.href='contrato-prueba.html';draft.target='_blank';draft.rel='noopener noreferrer';draft.textContent='Preparar borrador de contrato · PRUEBA';card.append(draft)}
       if(!s.revoked_at){const revoke=document.createElement('button');revoke.className='btn danger';revoke.type='button';revoke.textContent='Revocar enlace ficticio';revoke.addEventListener('click',async()=>{revoke.disabled=true;revoke.textContent='Revocando…';try{await callApi({action:'revoke',shareId:s.id});feedback('Enlace ficticio revocado.');await refreshShares()}catch(e){feedback(e.message||'No se pudo revocar el enlace.',true);revoke.disabled=false;revoke.textContent='Revocar enlace ficticio'}});card.append(revoke)}
       host.append(card)
@@ -93,6 +106,7 @@ async function refreshShares(){
   }catch(e){feedback(e.message||'No se pudieron leer las respuestas.',true)}
 }
 verifySession();
+setInterval(()=>{if(session&&!document.hidden)refreshShares()},15000);
 })();
 </script>
 <script>
