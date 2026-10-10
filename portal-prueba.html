@@ -34,11 +34,12 @@
 <div class="footer">Sincronización de prueba · no se leen ni modifican las cotizaciones guardadas</div>
 </main>
 <script>
+(()=>{
 const SUPABASE_URL='https://znveievywohgvqvsqtim.supabase.co';
 const PUBLIC_KEY='sb_publishable_52Db1WOmMQviCoAmP1S7tA_8UPzw_tP';
 const API=SUPABASE_URL+'/functions/v1/rocas-client-share';
 const CLIENT_URL=new URL('cliente.html',location.href);
-const supabase=window.supabase?.createClient(SUPABASE_URL,PUBLIC_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const authClient=window.supabase?.createClient(SUPABASE_URL,PUBLIC_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const $=id=>document.getElementById(id);let session=null;let currentShareId='';let currentShareUrl='';
 const fakeQuote={number:'ROCAS-DEMO-2026-001',revision:1,form:{client:'Cliente de prueba · no real',project:'Prueba de enlace y respuesta',date:'2026-10-10',quoteNo:'ROCAS-DEMO-2026-001',quoteType:'Cotización de prueba',quoteStatus:'Enviada',location:'Dirección ficticia',notes:'Demostración de una cotización. Los importes son ficticios y no constituyen tarifas ROCAS.'},lines:[{code:'DEMO-01',chapter:'Prueba',name:'Actividad ficticia de mano de obra',unit:'m²',qty:10,price:1000}]};
 function status(text,error=false){$('authStatus').textContent=text;$('authStatus').className='status'+(error?' error':'')}
@@ -47,20 +48,20 @@ async function callApi(body){const r=await fetch(API,{method:'POST',headers:{api
 function authHelp(text,withLink=false){const box=$('authHelp');box.replaceChildren(document.createTextNode(text));if(withLink){const a=document.createElement('a');a.href='index.html';a.textContent=' Abrir el cotizador ROCAS';box.append(a)}}
 function showActiveSession(value){if(!value)return false;session=value;status('Sesión ROCAS activa');authHelp('Listo para crear únicamente un enlace ficticio.');$('loginBox').classList.add('hidden');$('createBtn').disabled=false;$('refreshBtn').disabled=false;setTimeout(()=>refreshShares(),0);return true}
 function showNoSession(){status('No hay sesión activa en este navegador.',true);authHelp('Puedes volver a comprobar o pedir un acceso al correo de tu cuenta.',true);$('loginBox').classList.remove('hidden');$('retrySessionBtn').classList.remove('hidden')}
-if(supabase){supabase.auth.onAuthStateChange((event,value)=>{if(value)showActiveSession(value);else if(event==='INITIAL_SESSION'&&!session)showNoSession()})}
+if(authClient){authClient.auth.onAuthStateChange((event,value)=>{if(value)showActiveSession(value);else if(event==='INITIAL_SESSION'&&!session)showNoSession()})}
 async function verifySession(){
   $('createBtn').disabled=true;$('refreshBtn').disabled=true;$('retrySessionBtn').classList.add('hidden');
-  if(!supabase){status('No se pudo cargar el acceso.',true);authHelp('Recarga esta página para volver a intentarlo.');$('retrySessionBtn').classList.remove('hidden');return}
+  if(!authClient){status('No se pudo cargar el acceso.',true);authHelp('Recarga esta página para volver a intentarlo.');$('retrySessionBtn').classList.remove('hidden');return}
   let timer;
   try{
-    const result=await Promise.race([supabase.auth.getSession(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('timeout')),8000)})]);
+    const result=await Promise.race([authClient.auth.getSession(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('timeout')),8000)})]);
     clearTimeout(timer);const {data,error}=result;session=data?.session||null;
     if(error||!session){showNoSession();return}
     showActiveSession(session);
   }catch(e){clearTimeout(timer);if(session){showActiveSession(session);return}status('No pude confirmar la sesión.',true);authHelp('También puedes pedir un enlace de acceso al correo de tu cuenta ROCAS.',true);$('loginBox').classList.remove('hidden');$('retrySessionBtn').classList.remove('hidden')}
 }
 $('retrySessionBtn').addEventListener('click',verifySession);
-$('loginBtn').addEventListener('click',async()=>{const email=$('loginEmail').value.trim();if(!email){status('Escribe el correo de tu cuenta ROCAS.',true);$('loginEmail').focus();return}if(!supabase){status('No se pudo cargar el acceso.',true);return}$('loginBtn').disabled=true;$('loginBtn').textContent='Enviando…';status('Enviando enlace de acceso…');try{const {error}=await supabase.auth.signInWithOtp({email,options:{emailRedirectTo:new URL('./',location.href).href,shouldCreateUser:false}});if(error)throw error;status('Enlace enviado. Revisa tu correo.');authHelp('Abre el enlace recibido; volverá al cotizador ROCAS. Después regresa a este panel.')}catch(e){status('No se pudo enviar el enlace.',true);authHelp('Revisa el correo y vuelve a intentar.')}finally{$('loginBtn').disabled=false;$('loginBtn').textContent='Enviar enlace de acceso'}});
+$('loginBtn').addEventListener('click',async()=>{const email=$('loginEmail').value.trim();if(!email){status('Escribe el correo de tu cuenta ROCAS.',true);$('loginEmail').focus();return}if(!authClient){status('No se pudo cargar el acceso.',true);return}$('loginBtn').disabled=true;$('loginBtn').textContent='Enviando…';status('Enviando enlace de acceso…');try{const {error}=await authClient.auth.signInWithOtp({email,options:{emailRedirectTo:new URL('./',location.href).href,shouldCreateUser:false}});if(error)throw error;status('Enlace enviado. Revisa tu correo.');authHelp('Abre el enlace recibido; volverá al cotizador ROCAS. Después regresa a este panel.')}catch(e){status('No se pudo enviar el enlace.',true);authHelp('Revisa el correo y vuelve a intentar.')}finally{$('loginBtn').disabled=false;$('loginBtn').textContent='Enviar enlace de acceso'}});
 $('createBtn').addEventListener('click',async()=>{
   if(!session){feedback('Inicia sesión en el cotizador ROCAS primero.',true);return}
   $('createBtn').disabled=true;feedback('Creando un enlace solo para la cotización ficticia…');
@@ -82,6 +83,7 @@ async function refreshShares(){
   }catch(e){feedback(e.message||'No se pudieron leer las respuestas.',true)}
 }
 verifySession();
+})();
 </script>
 <script>
 setTimeout(()=>{const s=document.getElementById('authStatus');if(s&&s.textContent.startsWith('Verificando')){s.textContent='La sesión sigue pendiente.';s.className='status error';const h=document.getElementById('authHelp');if(h)h.textContent='Puedes reintentar o pedir un enlace de acceso al correo de tu cuenta ROCAS.';document.getElementById('loginBox')?.classList.remove('hidden');document.getElementById('retrySessionBtn')?.classList.remove('hidden')}},10000);
