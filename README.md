@@ -25,7 +25,8 @@ Los enlaces vencen a los 30 días y pueden revocarse. Mientras esté activo, el 
 - `supabase/migrations/20261010_quote_share_layer.sql`: tablas originales de enlaces/respuestas.
 - `supabase/migrations/20261010_quote_message_thread.sql`: tabla y política del hilo.
 - `supabase/migrations/20261010_contract_draft_test.sql`: borrador de contrato ficticio con acceso de propietario.
-- `contrato-prueba.html`: captura de contrato vinculada a una aceptación demo; guarda el borrador en la capa aislada. Word/PDF aún no están conectados.
+- `contrato-prueba.html`: captura de contrato ligada a una aceptación demo; guarda el borrador en la capa aislada, ofrece descarga DOCX y prepara PDF con la impresión del navegador.
+- `contract-export.js`: genera el DOCX localmente, sin dependencias de pago ni envío del contenido a un servicio externo.
 
 ## Prueba sugerida
 
@@ -34,5 +35,7 @@ Los enlaces vencen a los 30 días y pueden revocarse. Mientras esté activo, el 
 3. Ver el mensaje en el panel y responder como ROCAS.
 4. Volver a la página del cliente y confirmar que aparece la respuesta.
 5. Comprobar que ambos mensajes quedan en el mismo hilo y conservar el enlace mientras esté activo.
+6. Desde una aceptación DEMO, guardar el borrador y reabrirlo para revisar la persistencia.
+7. Descargar DOCX BORRADOR o abrir la impresión para “Guardar como PDF”; verificar los campos POR COMPLETAR y los avisos de no firma.
 
-La aceptación en la app no es firma ni aprobación legal. Un borrador solo se guarda si existe una aceptación de prueba ficticia; permanece como BORRADOR. Word/PDF no están conectados y no se modifica el cotizador real.
+La aceptación en la app no es firma ni aprobación legal. Un borrador solo se guarda si existe una aceptación ficticia. DOCX y la impresión a PDF quedan marcados BORRADOR y usan campos POR COMPLETAR donde falte información; no modifican el cotizador real ni generan un contrato final.
