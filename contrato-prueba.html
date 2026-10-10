@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<title>ROCAS · Borrador de contrato de prueba</title>
+<style>
+:root{--green:#145b55;--navy:#173b3a;--ink:#24312e;--muted:#64736e;--bg:#f3f6f4;--line:#dce5e0;--white:#fff;--mint:#e8f4f0;--gold:#8d641a;--pale:#fff6e3;--red:#9b3f37}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}.bar{background:var(--navy);color:#fff;padding:15px 18px;position:sticky;top:0;z-index:3}.barin{max-width:900px;margin:auto;display:flex;justify-content:space-between;gap:12px;align-items:center}.brand{font-size:18px;font-weight:900;letter-spacing:.04em}.brand small{display:block;color:#c7ddd7;font-size:10px;font-weight:500;letter-spacing:0}.badge{background:#fff6e3;color:#8d641a;border-radius:99px;padding:5px 9px;font-size:10px;font-weight:900;white-space:nowrap}.wrap{max-width:900px;margin:20px auto;padding:0 14px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:13px;box-shadow:0 8px 24px rgba(21,58,52,.05)}h1{font-size:23px;line-height:1.2;color:var(--navy);margin:3px 0 4px}h2{font-size:16px;color:var(--navy);margin:0 0 4px}.sub{color:var(--muted);font-size:12px;margin:0 0 13px}.tag{display:inline-block;background:var(--mint);color:var(--green);border-radius:99px;padding:4px 8px;font-size:9px;font-weight:900;letter-spacing:.04em}.source{background:#f8faf8;border:1px solid var(--line);border-radius:10px;padding:13px;margin-top:12px}.source strong{color:var(--navy)}.sourcegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.sourceitem{font-size:11px;color:var(--muted)}.sourceitem b{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px}.locked{font-size:10px;color:var(--green);font-weight:800}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.field{min-width:0}.field.full{grid-column:1/-1}label{display:block;font-size:11px;font-weight:800;margin:0 0 4px;color:var(--ink)}.req{font-size:9px;color:var(--muted);font-weight:600}.control{display:flex;gap:7px;align-items:center}.control input,.control textarea,.control select{width:100%;min-width:0;padding:9px 10px;border:1px solid #cbd8d2;border-radius:8px;background:#fff;font:inherit;font-size:12px;color:var(--ink)}textarea{min-height:65px;resize:vertical}.control input:disabled,.control textarea:disabled{background:#f2f4f3;color:var(--muted)}.na{white-space:nowrap;font-size:10px;color:var(--muted);display:flex;align-items:center;gap:4px}.na input{width:auto}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}.pending{font-size:10px;color:var(--gold);font-weight:800;background:var(--pale);border-radius:99px;padding:4px 8px}.hint{font-size:10px;color:var(--muted);margin-top:3px}.tablewrap{overflow-x:auto}.table{width:100%;border-collapse:collapse;margin:8px 0}.table th,.table td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;font-size:10px;vertical-align:middle}.table th{font-size:9px;color:var(--muted);text-transform:uppercase}.table input{width:100%;min-width:90px;padding:7px;border:1px solid #cbd8d2;border-radius:7px;font:inherit}.notice{background:var(--pale);border:1px solid #eadbb7;color:#6e541d;border-radius:10px;padding:12px;font-size:11px;margin:12px 0}.notice strong{display:block;margin-bottom:3px}.status{background:var(--mint);color:var(--green);border-radius:9px;padding:9px 11px;font-size:11px;margin-top:8px;display:none}.status.show{display:block}.buttons{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--green);border-radius:8px;padding:10px 13px;background:var(--green);color:#fff;font-weight:850;font-size:11px;cursor:pointer}.btn.alt{background:#fff;color:var(--green)}.btn:disabled{opacity:.45;cursor:not-allowed}.foot{text-align:center;color:var(--muted);font-size:10px;padding:6px 12px 24px}.smallnote{font-size:10px;color:var(--muted)}
+@media(max-width:600px){.wrap{margin:13px auto}.card{padding:14px}.sourcegrid{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.barin{align-items:flex-start}.badge{font-size:8px}.buttons .btn{flex:1}.table th,.table td{font-size:9px}}
+</style>
+</head>
+<body>
+<header class="bar"><div class="barin"><div class="brand">ROCAS<small>Prototipo aislado · borrador de contrato</small></div><span class="badge">SOLO DATOS FICTICIOS</span></div></header>
+<main class="wrap">
+  <section class="card">
+    <span class="tag">BORRADOR · PENDIENTE DE REVISIÓN</span>
+    <h1>Datos del contrato</h1>
+    <p class="sub">Completa lo acordado. Lo que falte quedará marcado como POR COMPLETAR; no se inventan condiciones.</p>
+    <div class="source">
+      <div class="locked">🔒 Cotización vinculada · solo lectura</div>
+      <p style="margin:7px 0 0"><strong>ROCAS-DEMO-2026-001</strong> · Revisión 1 · Aceptación registrada, pendiente de revisión por ROCAS.</p>
+      <div class="sourcegrid">
+        <div class="sourceitem"><b>Cliente</b>Cliente de prueba — NO REAL</div>
+        <div class="sourceitem"><b>Proyecto</b>Prueba de enlace y respuesta</div>
+        <div class="sourceitem"><b>Valor mano de obra</b>COP 10.000 · ficticio</div>
+      </div>
+      <p class="smallnote" style="margin:8px 0 0">La revisión del origen queda fija aunque después se edite otra cotización.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="sectionhead"><h2>1. Partes</h2><span class="pending">Revisar datos</span></div>
+    <div class="grid">
+      <div class="field"><label>Cliente · nombre o razón social</label><div class="control"><input data-track placeholder="POR COMPLETAR"></div></div>
+      <div class="field"><label>Documento / NIT</label><div class="control"><input data-track placeholder="POR COMPLETAR"></div></div>
+      <div class="field full"><label>Dirección del cliente</label><div class="control"><input data-track placeholder="POR COMPLETAR"></div></div>
+      <div class="field"><label>Teléfono de contacto</label><div class="control"><input data-track placeholder="POR COMPLETAR"></div></div>
+      <div class="field"><label>Correo electrónico</label><div class="control"><input data-track type="email" placeholder="POR COMPLETAR"></div></div>
+      <div class="field full"><label>Representante, si aplica</label><div class="control"><input data-track placeholder="POR COMPLETAR"><label class="na"><input type="checkbox" data-na> No aplica</label></div></div>
+      <div class="field"><label>ROCAS · nombre o razón social</label><div class="control"><input data-track placeholder="POR COMPLETAR"></div></div>
+      <div class="field"><label>ROCAS · documento / NIT</label><div class="control"><input data-track placeholder="POR COMPLETAR"></div></div>
+      <div class="field"><label>ROCAS · dirección</label><div class="control"><input data-track placeholder="POR COMPLETAR"></div></div>
+      <div class="field"><label>ROCAS · teléfono y correo</label><div class="control"><input data-track placeholder="POR COMPLETAR"></div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="sectionhead"><h2>2. Pago y plazo</h2><span class="pending">Sin valores supuestos</span></div>
+    <div class="tablewrap"><table class="table"><thead><tr><th>Hito / cuota</th><th>Valor o porcentaje</th><th>Fecha / condición</th></tr></thead><tbody>
+      <tr><td>Anticipo, si aplica</td><td><input data-track placeholder="POR COMPLETAR"></td><td><input data-track placeholder="POR COMPLETAR"></td></tr>
+      <tr><td>Avance / hito</td><td><input data-track placeholder="POR COMPLETAR"></td><td><input data-track placeholder="POR COMPLETAR"></td></tr>
+      <tr><td>Saldo / entrega</td><td><input data-track placeholder="POR COMPLETAR"></td><td><input data-track placeholder="POR COMPLETAR"></td></tr>
+    </tbody></table></div>
+    <div class="grid" style="margin-top:10px">
+      <div class="field"><label>Inicio previsto o condición de inicio</label><div class="control"><input data-track placeholder="POR COMPLETAR"></div></div>
+      <div class="field"><label>Fecha prevista de entrega</label><div class="control"><input data-track placeholder="POR COMPLETAR"></div></div>
+      <div class="field"><label>Duración estimada</label><div class="control"><input data-track placeholder="POR COMPLETAR"></div></div>
+      <div class="field"><label>Impuestos / retenciones, si corresponden</label><div class="control"><input data-track placeholder="POR COMPLETAR"><label class="na"><input type="checkbox" data-na> No aplica</label></div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="sectionhead"><h2>3. Materiales y condiciones</h2><span class="pending">Anexo separado</span></div>
+    <div class="grid">
+      <div class="field"><label>Suministros a cargo del cliente</label><div class="control"><input data-track placeholder="POR COMPLETAR"><label class="na"><input type="checkbox" data-na> No aplica</label></div></div>
+      <div class="field"><label>Suministros a cargo de ROCAS</label><div class="control"><input data-track placeholder="POR COMPLETAR"><label class="na"><input type="checkbox" data-na> No aplica</label></div></div>
+      <div class="field full"><label>Exclusiones y costos no incluidos</label><textarea data-track>Presupuesto de mano de obra. No incluye materiales, equipos, transporte, disposición de escombros, AIU, impuestos ni otros costos, salvo que se indiquen expresamente por separado.</textarea></div>
+      <div class="field full"><label>Condiciones especiales del sitio</label><div class="control"><textarea data-track placeholder="POR COMPLETAR"></textarea><label class="na"><input type="checkbox" data-na> No aplica</label></div></div>
+    </div>
+    <p class="hint">El desglose de materiales, si se incorpora, va en un anexo y no se suma al total de mano de obra.</p>
+  </section>
+
+  <section class="card">
+    <div class="sectionhead"><h2>4. Entrega y garantía</h2><span class="pending">Revisar condiciones</span></div>
+    <div class="grid">
+      <div class="field"><label>Revisión de entrega y pendientes</label><textarea data-track placeholder="POR COMPLETAR"></textarea></div>
+      <div class="field"><label>Acta, fotos u otros soportes</label><div class="control"><input data-track placeholder="POR COMPLETAR"><label class="na"><input type="checkbox" data-na> No aplica</label></div></div>
+      <div class="field"><label>Plazo y alcance de garantía</label><textarea data-track placeholder="POR COMPLETAR"></textarea></div>
+      <div class="field"><label>Cómo reportar una novedad</label><textarea data-track placeholder="POR COMPLETAR"></textarea></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="sectionhead"><h2>5. Cierre y comunicaciones</h2><span class="pending">POR COMPLETAR</span></div>
+    <div class="grid">
+      <div class="field"><label>Pausa, reprogramación o terminación</label><textarea data-track placeholder="POR COMPLETAR"></textarea></div>
+      <div class="field"><label>Canales de comunicación</label><input data-track placeholder="WhatsApp / correo / otro"></div>
+      <div class="field"><label>Ciudad y fecha de firma</label><input data-track placeholder="POR COMPLETAR"></div>
+      <div class="field"><label>Nombres y documentos para firma</label><input data-track placeholder="POR COMPLETAR"></div>
+    </div>
+  </section>
+
+  <div class="notice"><strong>Importante</strong>La aceptación del cliente es un registro de respuesta, no una firma. Este prototipo no genera un contrato final ni se conecta al cotizador, a las cotizaciones reales o a los respaldos.</div>
+  <section class="card">
+    <div class="sectionhead"><h2>Revisión de campos</h2><span id="pendingCount" class="pending">Pendientes por revisar</span></div>
+    <p class="smallnote">Completa lo acordado o marca “No aplica”. Guardar en esta maqueta solo simula la acción; Word y PDF aún no están conectados.</p>
+    <div class="buttons"><button id="saveBtn" class="btn" type="button">Simular guardado de borrador</button><button class="btn alt" type="button" disabled>Descargar Word · BORRADOR</button><button class="btn alt" type="button" disabled>Exportar PDF · BORRADOR</button></div>
+    <div id="feedback" class="status" role="status" aria-live="polite"></div>
+  </section>
+  <div class="foot">Prototipo aislado · datos de demostración · no modifica ni sincroniza con el cotizador ROCAS.</div>
+</main>
+<script>
+const track=[...document.querySelectorAll('[data-track]')];
+const count=document.getElementById('pendingCount');
+function updateCount(){let pending=0;for(const el of track){if(el.disabled)continue;if(!el.value.trim())pending++}count.textContent=pending?`${pending} campo(s) por completar o marcar No aplica`:'Campos visibles completados';count.classList.toggle('pending',pending>0)}
+document.querySelectorAll('[data-na]').forEach(check=>check.addEventListener('change',()=>{const input=check.closest('.control').querySelector('input:not([type=checkbox]),textarea');if(!input)return;input.disabled=check.checked;if(check.checked){input.dataset.previous=input.value;input.value='No aplica'}else{input.value=input.dataset.previous||''}updateCount()}));
+track.forEach(el=>el.addEventListener('input',updateCount));
+document.getElementById('saveBtn').addEventListener('click',()=>{const f=document.getElementById('feedback');f.textContent='Simulación: el borrador quedaría guardado como BORRADOR. No se guardó ni sincronizó ningún dato.';f.classList.add('show');updateCount()});
+updateCount();
+</script>
+</body>
+</html>
