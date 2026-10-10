@@ -10,7 +10,7 @@ Los enlaces vencen a los 30 días y pueden revocarse. Mientras esté activo, el 
 
 ## Seguridad de la prueba
 
-- Tablas separadas: `rocas_quote_shares`, `rocas_quote_responses` y `rocas_quote_messages`.
+- Tablas separadas: `rocas_quote_shares`, `rocas_quote_responses`, `rocas_quote_messages` y `rocas_contract_drafts`.
 - RLS habilitado; el cliente no accede directamente a las tablas.
 - El cliente llega a los datos y al hilo usando un token aleatorio; se guarda únicamente su hash.
 - El servidor acepta solo cotizaciones ficticias `ROCAS-DEMO-*` con cliente, proyecto y actividades DEMO.
@@ -24,7 +24,8 @@ Los enlaces vencen a los 30 días y pueden revocarse. Mientras esté activo, el 
 - `supabase/functions/rocas-client-share/index.ts`: operaciones protegidas de compartir, consultar, responder, mensajes y revocación.
 - `supabase/migrations/20261010_quote_share_layer.sql`: tablas originales de enlaces/respuestas.
 - `supabase/migrations/20261010_quote_message_thread.sql`: tabla y política del hilo.
-- `contrato-prueba.html`: prototipo separado de captura de contrato, todavía sin guardado ni exportación.
+- `supabase/migrations/20261010_contract_draft_test.sql`: borrador de contrato ficticio con acceso de propietario.
+- `contrato-prueba.html`: captura de contrato vinculada a una aceptación demo; guarda el borrador en la capa aislada. Word/PDF aún no están conectados.
 
 ## Prueba sugerida
 
@@ -34,4 +35,4 @@ Los enlaces vencen a los 30 días y pueden revocarse. Mientras esté activo, el 
 4. Volver a la página del cliente y confirmar que aparece la respuesta.
 5. Comprobar que ambos mensajes quedan en el mismo hilo y conservar el enlace mientras esté activo.
 
-La aceptación en la app no es firma ni aprobación legal. El prototipo de contrato permanece como BORRADOR; no genera documentos finales ni se integra aún con el cotizador real.
+La aceptación en la app no es firma ni aprobación legal. Un borrador solo se guarda si existe una aceptación de prueba ficticia; permanece como BORRADOR. Word/PDF no están conectados y no se modifica el cotizador real.

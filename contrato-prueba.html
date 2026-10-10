@@ -6,26 +6,28 @@
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="referrer" content="no-referrer">
 <title>ROCAS · Borrador de contrato de prueba</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--green:#145b55;--navy:#173b3a;--ink:#24312e;--muted:#64736e;--bg:#f3f6f4;--line:#dce5e0;--white:#fff;--mint:#e8f4f0;--gold:#8d641a;--pale:#fff6e3;--red:#9b3f37}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}.bar{background:var(--navy);color:#fff;padding:15px 18px;position:sticky;top:0;z-index:3}.barin{max-width:900px;margin:auto;display:flex;justify-content:space-between;gap:12px;align-items:center}.brand{font-size:18px;font-weight:900;letter-spacing:.04em}.brand small{display:block;color:#c7ddd7;font-size:10px;font-weight:500;letter-spacing:0}.badge{background:#fff6e3;color:#8d641a;border-radius:99px;padding:5px 9px;font-size:10px;font-weight:900;white-space:nowrap}.wrap{max-width:900px;margin:20px auto;padding:0 14px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:13px;box-shadow:0 8px 24px rgba(21,58,52,.05)}h1{font-size:23px;line-height:1.2;color:var(--navy);margin:3px 0 4px}h2{font-size:16px;color:var(--navy);margin:0 0 4px}.sub{color:var(--muted);font-size:12px;margin:0 0 13px}.tag{display:inline-block;background:var(--mint);color:var(--green);border-radius:99px;padding:4px 8px;font-size:9px;font-weight:900;letter-spacing:.04em}.source{background:#f8faf8;border:1px solid var(--line);border-radius:10px;padding:13px;margin-top:12px}.source strong{color:var(--navy)}.sourcegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.sourceitem{font-size:11px;color:var(--muted)}.sourceitem b{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px}.locked{font-size:10px;color:var(--green);font-weight:800}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.field{min-width:0}.field.full{grid-column:1/-1}label{display:block;font-size:11px;font-weight:800;margin:0 0 4px;color:var(--ink)}.req{font-size:9px;color:var(--muted);font-weight:600}.control{display:flex;gap:7px;align-items:center}.control input,.control textarea,.control select{width:100%;min-width:0;padding:9px 10px;border:1px solid #cbd8d2;border-radius:8px;background:#fff;font:inherit;font-size:12px;color:var(--ink)}textarea{min-height:65px;resize:vertical}.control input:disabled,.control textarea:disabled{background:#f2f4f3;color:var(--muted)}.na{white-space:nowrap;font-size:10px;color:var(--muted);display:flex;align-items:center;gap:4px}.na input{width:auto}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}.pending{font-size:10px;color:var(--gold);font-weight:800;background:var(--pale);border-radius:99px;padding:4px 8px}.hint{font-size:10px;color:var(--muted);margin-top:3px}.tablewrap{overflow-x:auto}.table{width:100%;border-collapse:collapse;margin:8px 0}.table th,.table td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;font-size:10px;vertical-align:middle}.table th{font-size:9px;color:var(--muted);text-transform:uppercase}.table input{width:100%;min-width:90px;padding:7px;border:1px solid #cbd8d2;border-radius:7px;font:inherit}.notice{background:var(--pale);border:1px solid #eadbb7;color:#6e541d;border-radius:10px;padding:12px;font-size:11px;margin:12px 0}.notice strong{display:block;margin-bottom:3px}.status{background:var(--mint);color:var(--green);border-radius:9px;padding:9px 11px;font-size:11px;margin-top:8px;display:none}.status.show{display:block}.buttons{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--green);border-radius:8px;padding:10px 13px;background:var(--green);color:#fff;font-weight:850;font-size:11px;cursor:pointer}.btn.alt{background:#fff;color:var(--green)}.btn:disabled{opacity:.45;cursor:not-allowed}.foot{text-align:center;color:var(--muted);font-size:10px;padding:6px 12px 24px}.smallnote{font-size:10px;color:var(--muted)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}.bar{background:var(--navy);color:#fff;padding:15px 18px;position:sticky;top:0;z-index:3}.barin{max-width:900px;margin:auto;display:flex;justify-content:space-between;gap:12px;align-items:center}.brand{font-size:18px;font-weight:900;letter-spacing:.04em}.brand small{display:block;color:#c7ddd7;font-size:10px;font-weight:500;letter-spacing:0}.badge{background:#fff6e3;color:#8d641a;border-radius:99px;padding:5px 9px;font-size:10px;font-weight:900;white-space:nowrap}.wrap{max-width:900px;margin:20px auto;padding:0 14px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:13px;box-shadow:0 8px 24px rgba(21,58,52,.05)}h1{font-size:23px;line-height:1.2;color:var(--navy);margin:3px 0 4px}h2{font-size:16px;color:var(--navy);margin:0 0 4px}.sub{color:var(--muted);font-size:12px;margin:0 0 13px}.tag{display:inline-block;background:var(--mint);color:var(--green);border-radius:99px;padding:4px 8px;font-size:9px;font-weight:900;letter-spacing:.04em}.source{background:#f8faf8;border:1px solid var(--line);border-radius:10px;padding:13px;margin-top:12px}.source strong{color:var(--navy)}.sourcegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.sourceitem{font-size:11px;color:var(--muted)}.sourceitem b{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px}.locked{font-size:10px;color:var(--green);font-weight:800}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.field{min-width:0}.field.full{grid-column:1/-1}label{display:block;font-size:11px;font-weight:800;margin:0 0 4px;color:var(--ink)}.req{font-size:9px;color:var(--muted);font-weight:600}.control{display:flex;gap:7px;align-items:center}.control input,.control textarea,.control select{width:100%;min-width:0;padding:9px 10px;border:1px solid #cbd8d2;border-radius:8px;background:#fff;font:inherit;font-size:12px;color:var(--ink)}textarea{min-height:65px;resize:vertical}.control input:disabled,.control textarea:disabled{background:#f2f4f3;color:var(--muted)}.na{white-space:nowrap;font-size:10px;color:var(--muted);display:flex;align-items:center;gap:4px}.na input{width:auto}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}.pending{font-size:10px;color:var(--gold);font-weight:800;background:var(--pale);border-radius:99px;padding:4px 8px}.hint{font-size:10px;color:var(--muted);margin-top:3px}.tablewrap{overflow-x:auto}.table{width:100%;border-collapse:collapse;margin:8px 0}.table th,.table td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;font-size:10px;vertical-align:middle}.table th{font-size:9px;color:var(--muted);text-transform:uppercase}.table input{width:100%;min-width:90px;padding:7px;border:1px solid #cbd8d2;border-radius:7px;font:inherit}.notice{background:var(--pale);border:1px solid #eadbb7;color:#6e541d;border-radius:10px;padding:12px;font-size:11px;margin:12px 0}.notice strong{display:block;margin-bottom:3px}.status{background:var(--mint);color:var(--green);border-radius:9px;padding:9px 11px;font-size:11px;margin-top:8px;display:none}.status.show{display:block}.buttons{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--green);border-radius:8px;padding:10px 13px;background:var(--green);color:#fff;font-weight:850;font-size:11px;cursor:pointer}.btn.alt{background:#fff;color:var(--green)}.btn:disabled{opacity:.45;cursor:not-allowed}.foot{text-align:center;color:var(--muted);font-size:10px;padding:6px 12px 24px}.smallnote{font-size:10px;color:var(--muted)}.hidden{display:none!important}
 @media(max-width:600px){.wrap{margin:13px auto}.card{padding:14px}.sourcegrid{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.barin{align-items:flex-start}.badge{font-size:8px}.buttons .btn{flex:1}.table th,.table td{font-size:9px}}
 </style>
 </head>
 <body>
 <header class="bar"><div class="barin"><div class="brand">ROCAS<small>Prototipo aislado · borrador de contrato</small></div><span class="badge">SOLO DATOS FICTICIOS</span></div></header>
-<main class="wrap">
+<div id="loadStatus" class="wrap"><section class="card"><strong id="loadTitle">Validando acceso ROCAS…</strong><p id="loadMessage" class="smallnote">Abriendo únicamente el borrador de una cotización ficticia.</p><a id="backToPanel" class="smallnote" href="portal-prueba.html">Volver al panel ROCAS</a></section></div>
+<main class="wrap hidden" id="appMain">
   <section class="card">
     <span class="tag">BORRADOR · PENDIENTE DE REVISIÓN</span>
     <h1>Datos del contrato</h1>
     <p class="sub">Completa lo acordado. Lo que falte quedará marcado como POR COMPLETAR; no se inventan condiciones.</p>
     <div class="source">
       <div class="locked">🔒 Cotización vinculada · solo lectura</div>
-      <p style="margin:7px 0 0"><strong>ROCAS-DEMO-2026-001</strong> · Revisión 1 · Aceptación registrada, pendiente de revisión por ROCAS.</p>
+      <p style="margin:7px 0 0"><strong id="quoteNumber">Cotización ficticia</strong> · Revisión <span id="quoteRevision">—</span> · Aceptación registrada, pendiente de revisión por ROCAS.</p>
       <div class="sourcegrid">
-        <div class="sourceitem"><b>Cliente</b>Cliente de prueba — NO REAL</div>
-        <div class="sourceitem"><b>Proyecto</b>Prueba de enlace y respuesta</div>
-        <div class="sourceitem"><b>Valor mano de obra</b>COP 10.000 · ficticio</div>
+        <div class="sourceitem"><b>Cliente</b><span id="contractClient">—</span></div>
+        <div class="sourceitem"><b>Proyecto</b><span id="contractProject">—</span></div>
+        <div class="sourceitem"><b>Valor mano de obra</b><span id="contractTotal">—</span></div>
       </div>
       <p class="smallnote" style="margin:8px 0 0">La revisión del origen queda fija aunque después se edite otra cotización.</p>
     </div>
@@ -96,20 +98,49 @@
   <div class="notice"><strong>Importante</strong>La aceptación del cliente es un registro de respuesta, no una firma. Este prototipo no genera un contrato final ni se conecta al cotizador, a las cotizaciones reales o a los respaldos.</div>
   <section class="card">
     <div class="sectionhead"><h2>Revisión de campos</h2><span id="pendingCount" class="pending">Pendientes por revisar</span></div>
-    <p class="smallnote">Completa lo acordado o marca “No aplica”. Guardar en esta maqueta solo simula la acción; Word y PDF aún no están conectados.</p>
-    <div class="buttons"><button id="saveBtn" class="btn" type="button">Simular guardado de borrador</button><button class="btn alt" type="button" disabled>Descargar Word · BORRADOR</button><button class="btn alt" type="button" disabled>Exportar PDF · BORRADOR</button></div>
+    <p class="smallnote">Completa lo acordado o marca “No aplica”. El guardado afecta solo el borrador de prueba vinculado a esta cotización ficticia. Word y PDF aún no están conectados.</p>
+    <div class="buttons"><button id="saveBtn" class="btn" type="button" disabled>Guardar borrador</button><button class="btn alt" type="button" disabled>Descargar Word · BORRADOR</button><button class="btn alt" type="button" disabled>Exportar PDF · BORRADOR</button></div>
     <div id="feedback" class="status" role="status" aria-live="polite"></div>
   </section>
   <div class="foot">Prototipo aislado · datos de demostración · no modifica ni sincroniza con el cotizador ROCAS.</div>
 </main>
 <script>
+const SUPABASE_URL='https://znveievywohgvqvsqtim.supabase.co';
+const PUBLIC_KEY='sb_publishable_52Db1WOmMQviCoAmP1S7tA_8UPzw_tP';
+const API=SUPABASE_URL+'/functions/v1/rocas-client-share';
+const $=id=>document.getElementById(id);
+const shareId=new URLSearchParams(location.search).get('shareId')||'';
 const track=[...document.querySelectorAll('[data-track]')];
-const count=document.getElementById('pendingCount');
+const fieldKeys=['clientName','clientId','clientAddress','clientPhone','clientEmail','clientRepresentative','rocasName','rocasId','rocasAddress','rocasContact','advanceAmount','advanceCondition','milestoneAmount','milestoneCondition','balanceAmount','balanceCondition','startCondition','deliveryDate','duration','taxes','clientSupplies','rocasSupplies','exclusions','siteConditions','inspection','supports','warranty','reportIssue','pauseTermination','communications','signatureCityDate','signers'];
+const noApplyKeys=new Set(['clientRepresentative','taxes','clientSupplies','rocasSupplies','siteConditions','supports']);
+const count=$('pendingCount');let accessToken='';
 function updateCount(){let pending=0;for(const el of track){if(el.disabled)continue;if(!el.value.trim())pending++}count.textContent=pending?`${pending} campo(s) por completar o marcar No aplica`:'Campos visibles completados';count.classList.toggle('pending',pending>0)}
+function showLoadError(title,message){$('loadTitle').textContent=title;$('loadMessage').textContent=message;$('loadStatus').classList.remove('hidden')}
+async function api(payload){const r=await fetch(API,{method:'POST',headers:{apikey:PUBLIC_KEY,Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},body:JSON.stringify(payload),cache:'no-store'});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'No se pudo completar la solicitud.');return data}
 document.querySelectorAll('[data-na]').forEach(check=>check.addEventListener('change',()=>{const input=check.closest('.control').querySelector('input:not([type=checkbox]),textarea');if(!input)return;input.disabled=check.checked;if(check.checked){input.dataset.previous=input.value;input.value='No aplica'}else{input.value=input.dataset.previous||''}updateCount()}));
-track.forEach(el=>el.addEventListener('input',updateCount));
-document.getElementById('saveBtn').addEventListener('click',()=>{const f=document.getElementById('feedback');f.textContent='Simulación: el borrador quedaría guardado como BORRADOR. No se guardó ni sincronizó ningún dato.';f.classList.add('show');updateCount()});
-updateCount();
+track.forEach(el=>{el.maxLength=2000;el.addEventListener('input',updateCount)});
+$('saveBtn').addEventListener('click',async()=>{const btn=$('saveBtn'),f=$('feedback');btn.disabled=true;btn.textContent='Guardando…';f.classList.remove('show');const draftData={};track.forEach((el,i)=>draftData[fieldKeys[i]]=el.value.trim());try{const result=await api({action:'contract-save',shareId,draftData});f.textContent='Borrador guardado · '+new Date(result.updatedAt).toLocaleString('es-CO')+'. Sigue marcado BORRADOR; no es un contrato final.';f.className='status show';f.style.color='';}catch(e){f.textContent=e.message||'No se pudo guardar el borrador.';f.className='status show';f.style.color='#9b3f37';}finally{btn.disabled=false;btn.textContent='Guardar borrador';updateCount()}});
+async function init(){
+  if(!/^[0-9a-f-]{36}$/i.test(shareId)){showLoadError('Borrador no disponible','Abre este borrador desde la respuesta aceptada de prueba en el panel ROCAS.');return}
+  const client=window.supabase?.createClient(SUPABASE_URL,PUBLIC_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  if(!client){showLoadError('No se pudo validar el acceso','Comprueba la conexión y vuelve a abrir el panel ROCAS.');return}
+  try{
+    const {data,error}=await client.auth.getSession();if(error||!data?.session){showLoadError('Hace falta la sesión ROCAS','Inicia sesión en ROCAS en este mismo navegador y vuelve a abrir el borrador desde el panel.');return}
+    accessToken=data.session.access_token;
+    const result=await api({action:'contract-load',shareId});
+    const snap=result.share.snapshot||{};
+    $('quoteNumber').textContent=result.share.quoteNumber;
+    $('quoteRevision').textContent=String(result.share.revision);
+    $('contractClient').textContent=result.share.clientName||snap.clientName||'Cliente ficticio';
+    $('contractProject').textContent=snap.project||'Proyecto de prueba';
+    $('contractTotal').textContent='COP '+Number(snap.laborTotal||0).toLocaleString('es-CO')+' · ficticio';
+    if(track.length!==fieldKeys.length)throw new Error('No se pudieron cargar los campos del borrador.');
+    const saved=result.draftData||{};track.forEach((el,i)=>{el.value=typeof saved[fieldKeys[i]]==='string'?saved[fieldKeys[i]]:''});
+    document.querySelectorAll('[data-na]').forEach(check=>{const input=check.closest('.control').querySelector('input:not([type=checkbox]),textarea');if(!input)return;check.checked=noApplyKeys.has(fieldKeys[track.indexOf(input)])&&input.value==='No aplica';input.disabled=check.checked});
+    $('loadStatus').classList.add('hidden');$('appMain').classList.remove('hidden');$('saveBtn').disabled=false;updateCount();
+  }catch(e){showLoadError('No se pudo abrir el borrador',e.message||'Vuelve al panel ROCAS e inténtalo otra vez.')}
+}
+init();
 </script>
 </body>
 </html>
