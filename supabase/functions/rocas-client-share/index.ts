@@ -118,6 +118,15 @@ function sanitizeQuote(input: unknown): { snapshot: Record<string, unknown>; quo
   if (!input || typeof input !== "object" || Array.isArray(input)) return null;
   const q = input as Record<string, unknown>;
   const form = q.form && typeof q.form === "object" && !Array.isArray(q.form) ? q.form as Record<string, unknown> : {};
+  const rawProvider = q.provider && typeof q.provider === "object" && !Array.isArray(q.provider) ? q.provider as Record<string, unknown> : {};
+  const provider = {
+    name: str(rawProvider.name, 160, true),
+    idNumber: str(rawProvider.idNumber, 40, true),
+    phone: str(rawProvider.phone, 40, true),
+    email: str(rawProvider.email, 160, true).toLowerCase(),
+    address: str(rawProvider.address, 240, true),
+  };
+  if (!provider.name || !provider.idNumber || !provider.phone || !provider.address || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(provider.email)) return null;
   const quoteNumber = str(q.number ?? form.quoteNo, 80, true);
   const revisionRaw = Number(q.revision ?? 1);
   const revision = Number.isInteger(revisionRaw) && revisionRaw > 0 ? revisionRaw : 1;
@@ -159,6 +168,7 @@ function sanitizeQuote(input: unknown): { snapshot: Record<string, unknown>; quo
     date: str(form.date, 20),
     clientName,
     project,
+    provider,
     workLocation: str(form.location, 300),
     scopeNotes: str(form.notes, 3000),
     items,
