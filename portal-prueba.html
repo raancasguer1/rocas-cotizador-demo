@@ -13,13 +13,13 @@
 </style>
 </head>
 <body>
-<header class="bar"><div class="brand">ROCAS<small>PANEL PRIVADO · SOLO DEMO</small></div></header>
+<header class="bar"><div class="brand">ROCAS<small>PANEL PRIVADO · ENLACES DE COTIZACIÓN</small></div></header>
 <main class="wrap">
 <section class="card">
-  <span class="tag">PANEL PRIVADO · SOLO DEMO</span>
-  <h1 class="title">Crear enlace de prueba</h1>
-  <p class="muted">Estás en el panel privado de ROCAS, no en la vista del cliente. Aquí revisas respuestas y mensajes. Para probar como cliente, abre el enlace que se muestra en la Prueba guiada.</p>
-  <p class="muted">Este panel crea una cotización demostrativa independiente. No usa ni modifica presupuestos reales. Usa la sesión ROCAS ya iniciada en este mismo navegador.</p>
+  <span class="tag">PANEL PRIVADO · COTIZACIONES</span>
+  <h1 class="title">Enlaces y respuestas</h1>
+  <p class="muted">Aquí revisas respuestas y mensajes de cotizaciones compartidas desde el historial. El cliente abre únicamente la cotización seleccionada.</p>
+  <p class="muted">Los enlaces reales se crean desde el historial. El botón de abajo genera una cotización DEMO ficticia para practicar; no usa ni modifica presupuestos guardados. Usa la sesión ROCAS de este navegador.</p>
   <div id="authStatus" class="status">Verificando sesión…</div>
   <div id="authHelp" class="small">Comprobando la sesión de este navegador.</div>
   <div id="loginBox" class="small hidden"><label for="loginEmail">Si no reconoce la sesión, pide un enlace de acceso al correo de tu cuenta ROCAS. No se enviará hasta que pulses el botón.</label><div class="login-row"><input id="loginEmail" type="email" autocomplete="email" placeholder="Correo de acceso"><button id="loginBtn" class="btn alt" type="button">Enviar enlace de acceso</button></div></div>
@@ -29,10 +29,10 @@
   <div class="notice">El enlace abre únicamente una cotización ficticia de prueba. No lo envíes a clientes. Revoca el enlace al terminar.</div>
 </section>
 <section class="card">
-  <h2 style="font-size:16px;color:var(--navy);margin:0">Conversaciones de demostración</h2><p class="muted">Mensajes del cliente y respuestas de ROCAS quedan guardados por cotización y revisión.</p>
+  <h2 style="font-size:16px;color:var(--navy);margin:0">Cotizaciones compartidas</h2><p class="muted">Aquí verás el estado del enlace y los mensajes y respuestas del cliente, vinculados al folio y revisión.</p>
   <div id="responseList" class="list"><div class="muted">Inicia sesión en el cotizador ROCAS para revisar el estado.</div></div>
 </section>
-<div class="footer">Sincronización de prueba · no se leen ni modifican las cotizaciones guardadas</div>
+<div class="footer"><a href="index.html">Volver al cotizador e historial</a> · Enlaces privados y DEMO; los presupuestos originales no se modifican</div>
 </main>
 <script>
 (()=>{
@@ -82,26 +82,26 @@ function renderOwnerThread(share,rows){
   for(const item of rows){const bubble=document.createElement('div');bubble.className='thread-msg'+(item.sender_type==='owner'?' owner':'');const meta=document.createElement('div');meta.className='thread-meta';const stamp=Date.parse(item.created_at||'');meta.textContent=(item.sender_type==='owner'?'ROCAS':item.sender_name||'Cliente')+(Number.isFinite(stamp)?' · '+new Date(stamp).toLocaleString('es-CO',{dateStyle:'short',timeStyle:'short'}):'');const text=document.createElement('div');text.className='thread-text';text.textContent=item.message||'';bubble.append(meta,text);log.append(bubble)}
   box.append(log);
   const active=!share.revoked_at&&Date.parse(share.expires_at)>Date.now();
-  if(active){const form=document.createElement('div');form.className='thread-form';const input=document.createElement('textarea');input.maxLength=2000;input.placeholder='Escribe una respuesta para el cliente…';const send=document.createElement('button');send.className='btn alt';send.type='button';send.textContent='Responder como ROCAS';send.addEventListener('click',async()=>{const message=input.value.trim();if(!message){feedback('Escribe un mensaje antes de responder.',true);input.focus();return}send.disabled=true;send.textContent='Enviando…';try{await callApi({action:'owner-message',shareId:share.id,message});input.value='';feedback('Mensaje enviado a la conversación de prueba.');await refreshShares()}catch(e){feedback(e.message||'No se pudo enviar el mensaje.',true)}finally{send.disabled=false;send.textContent='Responder como ROCAS'}});form.append(input,send);box.append(form)}
+  if(active){const form=document.createElement('div');form.className='thread-form';const input=document.createElement('textarea');input.maxLength=2000;input.placeholder='Escribe una respuesta para el cliente…';const send=document.createElement('button');send.className='btn alt';send.type='button';send.textContent='Responder como ROCAS';send.addEventListener('click',async()=>{const message=input.value.trim();if(!message){feedback('Escribe un mensaje antes de responder.',true);input.focus();return}send.disabled=true;send.textContent='Enviando…';try{await callApi({action:'owner-message',shareId:share.id,message});input.value='';feedback('Mensaje enviado en la conversación.');await refreshShares()}catch(e){feedback(e.message||'No se pudo enviar el mensaje.',true)}finally{send.disabled=false;send.textContent='Responder como ROCAS'}});form.append(input,send);box.append(form)}
   else{const note=document.createElement('div');note.className='small';note.textContent='El enlace está vencido o revocado. El historial se conserva, pero no se puede seguir escribiendo desde ese enlace.';box.append(note)}
   return box;
 }
 async function refreshShares(){
   if(!session)return;
   try{
-    const d=await callApi({action:'owner-list'});const rows=(d.shares||[]).filter(s=>String(s.quote_number||'').startsWith('ROCAS-DEMO-'));const host=$('responseList');host.replaceChildren();
-    if(!rows.length){const empty=document.createElement('div');empty.className='muted';empty.textContent='Aún no hay cotizaciones ficticias compartidas.';host.append(empty);return}
+    const d=await callApi({action:'owner-list'});const rows=d.shares||[];const host=$('responseList');host.replaceChildren();
+    if(!rows.length){const empty=document.createElement('div');empty.className='muted';empty.textContent='Aún no hay cotizaciones compartidas.';host.append(empty);return}
     const resp=d.responses||[];const messages=d.messages||[];
     rows.forEach(s=>{
       const card=document.createElement('div');card.className='item';
       const title=document.createElement('strong');title.textContent=s.quote_number+' · revisión '+s.quote_revision;
-      const meta=document.createElement('div');meta.className='small';meta.textContent='Cliente ficticio: '+s.client_name+' · '+(s.revoked_at?'Enlace revocado':new Date(s.expires_at)<new Date()?'Enlace vencido':'Enlace activo');card.append(title,meta);
+      const isDemo=String(s.quote_number||'').startsWith('ROCAS-DEMO-');const meta=document.createElement('div');meta.className='small';meta.textContent=(isDemo?'Cliente DEMO: ':'Cliente: ')+s.client_name+' · '+(s.revoked_at?'Enlace revocado':new Date(s.expires_at)<new Date()?'Enlace vencido':'Enlace activo');card.append(title,meta);
       const related=resp.filter(r=>r.share_id===s.id);
       if(related.length){related.forEach(r=>{const line=document.createElement('div');line.className='small';const labels={accepted:'Aceptó',change_request:'Pidió un cambio',question:'Hizo una consulta',rejected:'No aceptó'};line.textContent=(labels[r.response_type]||'Respuesta')+' · '+r.respondent_name+(r.message?': '+r.message:'');card.append(line)})}
       else{const none=document.createElement('div');none.className='small';none.textContent='Sin respuesta todavía.';card.append(none)}
       card.append(renderOwnerThread(s,messages.filter(m=>m.share_id===s.id)));
       if(String(s.quote_number||'').startsWith('ROCAS-DEMO-')&&s.client_name==='Cliente de prueba · no real'&&related.some(r=>r.response_type==='accepted')){const draft=document.createElement('a');draft.className='btn alt';draft.href='contrato-prueba.html?shareId='+encodeURIComponent(s.id);draft.target='_blank';draft.rel='noopener noreferrer';draft.textContent='Preparar borrador de contrato · PRUEBA';card.append(draft)}
-      if(!s.revoked_at){const revoke=document.createElement('button');revoke.className='btn danger';revoke.type='button';revoke.textContent='Revocar enlace ficticio';revoke.addEventListener('click',async()=>{revoke.disabled=true;revoke.textContent='Revocando…';try{await callApi({action:'revoke',shareId:s.id});feedback('Enlace ficticio revocado.');await refreshShares()}catch(e){feedback(e.message||'No se pudo revocar el enlace.',true);revoke.disabled=false;revoke.textContent='Revocar enlace ficticio'}});card.append(revoke)}
+      if(!s.revoked_at){const revoke=document.createElement('button');revoke.className='btn danger';revoke.type='button';revoke.textContent=isDemo?'Revocar enlace DEMO':'Revocar enlace';revoke.addEventListener('click',async()=>{revoke.disabled=true;revoke.textContent='Revocando…';try{await callApi({action:'revoke',shareId:s.id});feedback(isDemo?'Enlace DEMO revocado.':'Enlace revocado.');await refreshShares()}catch(e){feedback(e.message||'No se pudo revocar el enlace.',true);revoke.disabled=false;revoke.textContent=isDemo?'Revocar enlace DEMO':'Revocar enlace'}});card.append(revoke)}
       host.append(card)
     });
   }catch(e){feedback(e.message||'No se pudieron leer las respuestas.',true)}
