@@ -73,7 +73,8 @@ $('createBtn').addEventListener('click',async()=>{
   }catch(e){feedback(e.message||'No se pudo crear el enlace.',true)}
   finally{$('createBtn').disabled=false}
 });
-$('refreshBtn').addEventListener('click',refreshShares);
+$('refreshBtn').addEventListener('click',()=>{if(hasPendingOwnerMessage()){feedback('Hay un mensaje sin enviar; envíalo antes de actualizar para conservarlo.',true);return}refreshShares()});
+function hasPendingOwnerMessage(){return Array.from($('responseList').querySelectorAll('.thread-form textarea')).some(field=>field===document.activeElement||field.value.trim().length>0)}
 function renderOwnerThread(share,rows){
   const box=document.createElement('div');box.className='thread';
   const heading=document.createElement('strong');heading.textContent='Hilo de mensajes';box.append(heading);
@@ -87,10 +88,10 @@ function renderOwnerThread(share,rows){
   return box;
 }
 async function refreshShares(){
-  if(!session)return;
+  if(!session||hasPendingOwnerMessage())return;
   try{
-    const d=await callApi({action:'owner-list'});const rows=d.shares||[];const host=$('responseList');host.replaceChildren();
-    if(!rows.length){const empty=document.createElement('div');empty.className='muted';empty.textContent='Aún no hay cotizaciones compartidas.';host.append(empty);return}
+    const d=await callApi({action:'owner-list'});if(hasPendingOwnerMessage())return;const rows=d.shares||[];const host=$('responseList');const pageX=window.scrollX,pageY=window.scrollY;host.replaceChildren();
+    if(!rows.length){const empty=document.createElement('div');empty.className='muted';empty.textContent='Aún no hay cotizaciones compartidas.';host.append(empty);requestAnimationFrame(()=>window.scrollTo(pageX,pageY));return}
     const resp=d.responses||[];const messages=d.messages||[];
     rows.forEach(s=>{
       const card=document.createElement('div');card.className='item';
@@ -104,10 +105,11 @@ async function refreshShares(){
       if(!s.revoked_at){const revoke=document.createElement('button');revoke.className='btn danger';revoke.type='button';revoke.textContent=isDemo?'Revocar enlace DEMO':'Revocar enlace';revoke.addEventListener('click',async()=>{revoke.disabled=true;revoke.textContent='Revocando…';try{await callApi({action:'revoke',shareId:s.id});feedback(isDemo?'Enlace DEMO revocado.':'Enlace revocado.');await refreshShares()}catch(e){feedback(e.message||'No se pudo revocar el enlace.',true);revoke.disabled=false;revoke.textContent=isDemo?'Revocar enlace DEMO':'Revocar enlace'}});card.append(revoke)}
       host.append(card)
     });
+    requestAnimationFrame(()=>window.scrollTo(pageX,pageY));
   }catch(e){feedback(e.message||'No se pudieron leer las respuestas.',true)}
 }
 verifySession();
-setInterval(()=>{if(session&&!document.hidden)refreshShares()},15000);
+setInterval(()=>{if(session&&!document.hidden&&!hasPendingOwnerMessage())refreshShares()},15000);
 })();
 </script>
 <script>
