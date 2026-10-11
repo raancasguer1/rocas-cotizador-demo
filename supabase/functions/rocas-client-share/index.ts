@@ -339,19 +339,17 @@ async function handleOwnerMessage(req: Request, body: Record<string, unknown>): 
   });
   const owned = await db(`rocas_quote_shares?${params.toString()}`) as Array<Record<string, unknown>>;
   const share = Array.isArray(owned) ? owned[0] : null;
-  if (!share || share.revoked_at) {
-    return json({ error: "Este enlace está cerrado y no admite nuevas respuestas." }, 409);
-  }
+  if (!share) return json({ error: "No se encontró esa cotización compartida en tu cuenta." }, 404);
   const expiry = Date.parse(String(share.expires_at));
   if (!Number.isFinite(expiry)) return json({ error: "No se pudo verificar la vigencia del enlace." }, 409);
   let renewedExpiry: string | null = null;
-  if (expiry <= Date.now()) {
+  if (share.revoked_at || expiry <= Date.now()) {
     renewedExpiry = new Date(Date.now() + SHARE_DAYS * 24 * 60 * 60 * 1000).toISOString();
-    const renewParams = new URLSearchParams({ id: `eq.${shareId}`, user_id: `eq.${user.id}`, deleted_at: "is.null", revoked_at: "is.null", select: "id" });
+    const renewParams = new URLSearchParams({ id: `eq.${shareId}`, user_id: `eq.${user.id}`, deleted_at: "is.null", select: "id" });
     const renewed = await db(`rocas_quote_shares?${renewParams.toString()}`, {
       method: "PATCH",
       headers: { Prefer: "return=representation" },
-      body: JSON.stringify({ expires_at: renewedExpiry }),
+      body: JSON.stringify({ expires_at: renewedExpiry, revoked_at: null }),
     }) as unknown[];
     if (!Array.isArray(renewed) || !renewed.length) return json({ error: "No se pudo reactivar el enlace para responder." }, 409);
   }
