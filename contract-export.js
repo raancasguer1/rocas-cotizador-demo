@@ -1,4 +1,4 @@
-/* Generación local de .docx para el prototipo ficticio ROCAS. Sin dependencias externas. */
+/* Generación local de borradores de contrato ROCAS. Sin dependencias externas. */
 (function(root){
   'use strict';
   const W='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
@@ -49,23 +49,51 @@
     all.set(end,at);return all;
   }
   function buildDocx(model){
-    const body=[];
+    const body=[],provider=model.provider||{},client=model.client||{};
+    const value=v=>String(v??'').trim()||'POR COMPLETAR';
+    const section=(title,rows)=>{
+      body.push(para([run(title,{bold:true,size:26})],{keepNext:true,after:80}));
+      for(const row of rows)body.push(para([run(row.label+': ',{bold:true}),run(value(row.value))]));
+      body.push(para([run('')],{after:80}));
+    };
     body.push(para([run('CONTRATO DE OBRA',{bold:true,size:34})],{align:'center',after:80}));
     body.push(para([run('BORRADOR · PENDIENTE DE REVISIÓN',{bold:true,color:'9B3F37',size:24})],{align:'center',after:120}));
-    body.push(para([run('Borrador de prueba · revisar antes de cualquier uso.',{bold:true,color:'9B3F37'})],{align:'center',after:120}));
-    body.push(para([run('Cotización vinculada: ',{bold:true}),run(String(model.quoteNumber||'POR COMPLETAR')+' · Revisión '+String(model.revision||'POR COMPLETAR'))]));
-    body.push(para([run('Cliente en la cotización: ',{bold:true}),run(String(model.quoteClient||'POR COMPLETAR'))]));
-    body.push(para([run('Proyecto: ',{bold:true}),run(String(model.project||'POR COMPLETAR'))]));
-    body.push(para([run('Valor de mano de obra: ',{bold:true}),run(String(model.laborTotal||'POR COMPLETAR'))]));
-    body.push(para([run('Generado: ',{bold:true}),run(String(model.generatedAt||''))],{after:180}));
-    body.push(para([run('Referencia ficticia de solo lectura; no modifica la cotización de origen.')],{after:120}));
-    for(const section of (model.sections||[])){
-      body.push(para([run(section.title,{bold:true,size:26})],{keepNext:true,after:80}));
-      for(const row of (section.rows||[]))body.push(para([run(row.label+': ',{bold:true}),run(row.value||'POR COMPLETAR')]));
-      body.push(para([run('')],{after:80}));
-    }
-    body.push(para([run('AVISO: BORRADOR · NO FIRMAR',{bold:true,color:'9B3F37',size:24})],{align:'center',after:80}));
-    body.push(para([run('La aceptación en la app no es firma electrónica, aprobación legal ni orden de obra. Los campos vacíos: POR COMPLETAR.')],{after:100}));
+    body.push(para([run('Cotización vinculada: ',{bold:true}),run(value(model.quoteNumber)+' · Revisión '+value(model.revision))]));
+    body.push(para([run('Cliente: ',{bold:true}),run(value(model.quoteClient))]));
+    body.push(para([run('Proyecto: ',{bold:true}),run(value(model.project))]));
+    body.push(para([run('Valor de mano de obra: ',{bold:true}),run(value(model.laborTotal))]));
+    body.push(para([run('Generado: ',{bold:true}),run(value(model.generatedAt))],{after:180}));
+    section('1. PARTES',[
+      {label:'Contratista · persona natural',value:provider.name},
+      {label:'C.C. del contratista',value:provider.idNumber},
+      {label:'Celular / WhatsApp',value:provider.phone},
+      {label:'Correo',value:provider.email},
+      {label:'Dirección de contacto',value:provider.address},
+      {label:'Cliente',value:model.quoteClient},
+      {label:'Identificación del cliente',value:client.idNumber},
+      {label:'Teléfono del cliente',value:client.phone},
+      {label:'Correo del cliente',value:client.email},
+      {label:'Dirección del cliente',value:client.address},
+    ]);
+    section('2. PAGO Y PLAZO',[
+      {label:'Valor de mano de obra',value:model.laborTotal},
+      {label:'Forma y condiciones de pago',value:model.paymentTerms},
+      {label:'Plazo de ejecución',value:model.duration},
+      {label:'Fecha o condición de inicio',value:model.startCondition},
+    ]);
+    section('3. CONDICIONES BÁSICAS',[
+      {label:'Objeto y alcance contratado',value:model.scope},
+      {label:'Observaciones, exclusiones y condiciones del sitio',value:model.conditions},
+      {label:'Materiales y suministros',value:model.materials},
+      {label:'Referencia fija',value:value(model.quoteNumber)+' · Revisión '+value(model.revision)},
+    ]);
+    section('4. FIRMAS',[
+      {label:'Contratista · nombre y firma',value:value(provider.name)+' · POR COMPLETAR'},
+      {label:'Cliente · nombre y firma',value:value(model.quoteClient)+' · POR COMPLETAR'},
+      {label:'Lugar y fecha de firma',value:model.signaturePlaceDate},
+    ]);
+    body.push(para([run('BORRADOR · NO FIRMAR',{bold:true,color:'9B3F37',size:24})],{align:'center',after:80}));
+    body.push(para([run('La aprobación registrada en ROCAS es manual; no es firma electrónica, aprobación legal ni orden de obra. Completa y revisa los campos POR COMPLETAR antes de imprimir o firmar.')],{after:100}));
     const docXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="'+W+'"><w:body>'+body.join('')+'<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="567" w:footer="567" w:gutter="0"/></w:sectPr></w:body></w:document>';
     const contentTypes='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="'+CT+'"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
     const rels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="'+REL+'"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';

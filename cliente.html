@@ -20,6 +20,7 @@
     <span class="tag">COTIZACIÓN · <span id="quoteRef"></span></span>
     <h1 class="title" id="project"></h1>
     <div class="details"><div class="detail"><b>Cliente</b><span id="clientName"></span></div><div class="detail"><b>Fecha</b><span id="quoteDate"></span></div><div class="detail"><b>Versión</b><span id="quoteRevision"></span></div><div class="detail"><b>Lugar de obra</b><span id="workLocation"></span></div></div>
+    <div id="providerDetails" class="details hidden" aria-label="Datos de contacto e identificación de ROCAS"><div class="detail"><b>Contratista / persona natural</b><span id="providerName"></span></div><div class="detail"><b>Cédula</b><span id="providerIdNumber"></span></div><div class="detail"><b>Celular / WhatsApp</b><span id="providerPhone"></span></div><div class="detail"><b>Correo</b><span id="providerEmail"></span></div><div class="detail" style="grid-column:1/-1"><b>Dirección de contacto</b><span id="providerAddress"></span></div></div>
     <h2 style="font-size:15px;color:var(--navy);margin-bottom:4px">Alcance del trabajo</h2>
     <div class="tablewrap"><table><thead><tr><th>Actividad</th><th>Cantidad</th><th>Valor</th></tr></thead><tbody id="lineItems"></tbody></table></div>
     <div class="total"><span>TOTAL MANO DE OBRA</span><strong id="quoteTotal"></strong></div>
@@ -39,11 +40,11 @@
     <div id="responseStatus" class="status"></div>
   </section>
   <section id="chatCard" class="card hidden">
-    <h2 style="font-size:17px;color:var(--navy);margin:0 0 4px">Conversación con ROCAS</h2>
+    <h2 style="font-size:17px;color:var(--navy);margin:0 0 4px">Mensajes con ROCAS</h2>
     <p class="muted" style="margin:0">Los mensajes quedan guardados en esta cotización y revisión.</p>
     <div id="incomingNotice" class="incoming-notice hidden" role="status" aria-live="polite"><span id="incomingNoticeText"></span><button id="dismissIncomingNotice" type="button" aria-label="Cerrar aviso">×</button></div>
     <div id="chatMessages" class="chat-list" role="log" aria-live="polite"></div>
-    <div class="chat-compose"><label for="chatName">Tu nombre</label><input id="chatName" maxlength="120" autocomplete="name" placeholder="Nombre de quien escribe"><label for="chatMessage">Mensaje</label><textarea id="chatMessage" maxlength="2000" placeholder="Escribe aquí para continuar la conversación"></textarea><button id="chatSendBtn" class="btn" type="button">Enviar mensaje a ROCAS</button></div>
+    <div class="chat-compose"><label for="chatName">Tu nombre</label><input id="chatName" maxlength="120" autocomplete="name" placeholder="Nombre de quien escribe"><label for="chatMessage">Mensaje</label><textarea id="chatMessage" maxlength="2000" placeholder="Escribe aquí para enviar un mensaje"></textarea><button id="chatSendBtn" class="btn" type="button">Enviar mensaje a ROCAS</button></div>
     <div id="chatStatus" class="status" role="status" aria-live="polite"></div>
   </section>
   <div class="footer">Enlace de una sola cotización · ROCAS</div>
@@ -64,7 +65,7 @@ $('dismissIncomingNotice').addEventListener('click',()=>$('incomingNotice').clas
 function renderThread(messages){
   const host=$('chatMessages'),oldTop=host.scrollTop,nearBottom=host.scrollHeight-host.scrollTop-host.clientHeight<35,pageX=window.scrollX,pageY=window.scrollY;
   host.replaceChildren();
-  if(!Array.isArray(messages)||!messages.length){const empty=document.createElement('div');empty.className='muted';empty.textContent='Todavía no hay mensajes. Escribe aquí para iniciar la conversación con ROCAS.';host.append(empty);requestAnimationFrame(()=>{host.scrollTop=0;window.scrollTo(pageX,pageY)});return}
+  if(!Array.isArray(messages)||!messages.length){const empty=document.createElement('div');empty.className='muted';empty.textContent='Todavía no hay mensajes. Escribe aquí para enviar un mensaje a ROCAS.';host.append(empty);requestAnimationFrame(()=>{host.scrollTop=0;window.scrollTo(pageX,pageY)});return}
   for(const item of messages){const bubble=document.createElement('div');bubble.className='chat-message'+(item.sender_type==='owner'?' owner':'');const meta=document.createElement('div');meta.className='chat-meta';const stamp=Date.parse(item.created_at||'');meta.textContent=(item.sender_type==='owner'?'ROCAS':safeText(item.sender_name)||'Cliente')+(Number.isFinite(stamp)?' · '+new Date(stamp).toLocaleString('es-CO',{dateStyle:'short',timeStyle:'short'}):'');const text=document.createElement('div');text.className='chat-body';text.textContent=safeText(item.message);bubble.append(meta,text);host.append(bubble)}
   requestAnimationFrame(()=>{host.scrollTop=nearBottom?host.scrollHeight:Math.min(oldTop,Math.max(0,host.scrollHeight-host.clientHeight));window.scrollTo(pageX,pageY)});
 }
@@ -76,6 +77,8 @@ function renderQuote(q){
   $('quoteDate').textContent=safeText(q.date)||'—';
   $('quoteRevision').textContent=String(q.revision||1);
   $('workLocation').textContent=safeText(q.workLocation)||'—';
+  const provider=q.provider&&typeof q.provider==='object'?q.provider:null;
+  if(provider&&provider.name&&provider.idNumber&&provider.phone&&provider.email&&provider.address){$('providerName').textContent=safeText(provider.name);$('providerIdNumber').textContent=safeText(provider.idNumber);$('providerPhone').textContent=safeText(provider.phone);$('providerEmail').textContent=safeText(provider.email);$('providerAddress').textContent=safeText(provider.address);$('providerDetails').classList.remove('hidden')}else{$('providerDetails').classList.add('hidden')}
   $('quoteTotal').textContent='COP '+Number(q.laborTotal||0).toLocaleString('es-CO');
   $('notice').textContent=safeText(q.notice)||'Presupuesto de mano de obra.';
   const notes=safeText(q.scopeNotes);$('scopeNotes').textContent=notes;$('scopeNotes').classList.toggle('hidden',!notes);
