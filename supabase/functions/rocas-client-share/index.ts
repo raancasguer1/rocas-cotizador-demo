@@ -1,5 +1,4 @@
-// Test-only isolated share layer for ROCAS quotes.
-// Deploy separately from the existing rocas-app function.
+// Secure quote sharing and messaging for the ROCAS owner and clients.
 // Required function environment: SUPABASE_URL, SUPABASE_ANON_KEY,
 // SUPABASE_SERVICE_ROLE_KEY. Never put the service-role key in browser code.
 // Configure this function with verify_jwt=false; this handler verifies owner JWTs
@@ -39,7 +38,7 @@ function json(data: unknown, status = 200): Response {
 }
 
 function badRequest(): Response { return json({ error: "No se pudo procesar la solicitud." }, 400); }
-function unavailable(): Response { return json({ error: "El servicio de prueba no está configurado." }, 503); }
+function unavailable(): Response { return json({ error: "El servicio de cotizaciones no está disponible." }, 503); }
 
 function str(value: unknown, max: number, required = false): string {
   if (typeof value !== "string") return "";
@@ -126,16 +125,9 @@ function sanitizeQuote(input: unknown): { snapshot: Record<string, unknown>; quo
   const project = str(form.project, 300, true);
   const status = str(form.quoteStatus, 40);
   const sourceLines = Array.isArray(q.lines) ? q.lines : [];
-  // This deployed route is still a demo-only test layer. Enforce this on the server,
-  // not just in the test page, so no real quote can be shared before owner review.
-  const demoOnly = quoteNumber.startsWith("ROCAS-DEMO-")
-    && clientName === "Cliente de prueba · no real"
-    && project === "Prueba de enlace y respuesta"
-    && sourceLines.length > 0
-    && sourceLines.every(raw => raw && typeof raw === "object" && !Array.isArray(raw)
-      && typeof (raw as Record<string, unknown>).code === "string"
-      && ((raw as Record<string, unknown>).code as string).startsWith("DEMO-"));
-  if (!quoteNumber || !clientName || !project || status !== "Enviada" || sourceLines.length > MAX_ITEMS || !demoOnly) return null;
+  // Only authenticated ROCAS owners may create links for real quotes marked as sent.
+  const realQuote = quoteNumber.startsWith("ROCAS-") && !quoteNumber.startsWith("ROCAS-DEMO-");
+  if (!quoteNumber || !clientName || !project || status !== "Enviada" || sourceLines.length > MAX_ITEMS || !realQuote) return null;
   const items: Array<Record<string, unknown>> = [];
   let total = 0;
   for (const raw of sourceLines) {
@@ -183,6 +175,8 @@ async function findActiveShare(token: string): Promise<Record<string, unknown> |
     select: "id,quote_number,quote_revision,client_name,snapshot,expires_at,revoked_at",
     token_hash: `eq.${digest}`,
     revoked_at: "is.null",
+    deleted_at: "is.null",
+    quote_number: "not.like.ROCAS-DEMO-*",
     expires_at: `gt.${new Date().toISOString()}`,
     limit: "1",
   });
@@ -292,6 +286,7 @@ async function handleClientThread(body: Record<string, unknown>): Promise<Respon
   const params = new URLSearchParams({
     share_id: `eq.${shareId}`,
     select: "id,share_id,sender_type,sender_name,message,created_at",
+    deleted_at: "is.null",
     order: "created_at.asc",
     limit: String(MAX_THREAD_MESSAGES),
   });
@@ -338,13 +333,27 @@ async function handleOwnerMessage(req: Request, body: Record<string, unknown>): 
   const params = new URLSearchParams({
     id: `eq.${shareId}`,
     user_id: `eq.${user.id}`,
+    deleted_at: "is.null",
     select: "id,expires_at,revoked_at",
     limit: "1",
   });
   const owned = await db(`rocas_quote_shares?${params.toString()}`) as Array<Record<string, unknown>>;
   const share = Array.isArray(owned) ? owned[0] : null;
-  if (!share || share.revoked_at || !Number.isFinite(Date.parse(String(share.expires_at))) || Date.parse(String(share.expires_at)) <= Date.now()) {
-    return json({ error: "Este enlace venció o fue revocado; puedes consultar el historial, pero ya no escribir en el hilo." }, 409);
+  if (!share || share.revoked_at) {
+    return json({ error: "Este enlace está cerrado y no admite nuevas respuestas." }, 409);
+  }
+  const expiry = Date.parse(String(share.expires_at));
+  if (!Number.isFinite(expiry)) return json({ error: "No se pudo verificar la vigencia del enlace." }, 409);
+  let renewedExpiry: string | null = null;
+  if (expiry <= Date.now()) {
+    renewedExpiry = new Date(Date.now() + SHARE_DAYS * 24 * 60 * 60 * 1000).toISOString();
+    const renewParams = new URLSearchParams({ id: `eq.${shareId}`, user_id: `eq.${user.id}`, deleted_at: "is.null", revoked_at: "is.null", select: "id" });
+    const renewed = await db(`rocas_quote_shares?${renewParams.toString()}`, {
+      method: "PATCH",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify({ expires_at: renewedExpiry }),
+    }) as unknown[];
+    if (!Array.isArray(renewed) || !renewed.length) return json({ error: "No se pudo reactivar el enlace para responder." }, 409);
   }
   const inserted = await db("rocas_quote_messages?select=id,share_id,sender_type,sender_name,message,created_at", {
     method: "POST",
@@ -352,7 +361,7 @@ async function handleOwnerMessage(req: Request, body: Record<string, unknown>): 
     body: JSON.stringify({ share_id: shareId, sender_type: "owner", sender_name: "ROCAS", message: messageRaw }),
   }) as Array<Record<string, unknown>>;
   if (!Array.isArray(inserted) || !inserted.length) throw new Error("message_insert_failed");
-  return json({ received: true, message: cleanMessage(inserted[0]) }, 201);
+  return json({ received: true, message: cleanMessage(inserted[0]), expiresAt: renewedExpiry }, 201);
 }
 
 async function handleOwnerList(req: Request): Promise<Response> {
@@ -360,7 +369,9 @@ async function handleOwnerList(req: Request): Promise<Response> {
   if (!user) return json({ error: "Inicia sesión en ROCAS para ver las respuestas." }, 401);
   const params = new URLSearchParams({
     user_id: `eq.${user.id}`,
-    select: "id,quote_number,quote_revision,client_name,created_at,expires_at,revoked_at,snapshot",
+    deleted_at: "is.null",
+    quote_number: "not.like.ROCAS-DEMO-*",
+    select: "id,quote_number,quote_revision,client_name,created_at,expires_at,revoked_at,snapshot,deleted_at",
     order: "created_at.desc",
     limit: "100",
   });
@@ -377,6 +388,7 @@ async function handleOwnerList(req: Request): Promise<Response> {
   const messageParams = new URLSearchParams({
     share_id: `in.(${ids.join(",")})`,
     select: "id,share_id,sender_type,sender_name,message,created_at",
+    deleted_at: "is.null",
     order: "created_at.asc",
     limit: "1000",
   });
@@ -456,6 +468,41 @@ async function handleContractSave(req: Request, body: Record<string, unknown>): 
   return json({ saved: true, status: "BORRADOR", updatedAt: rows[0].updated_at });
 }
 
+async function handleOwnerDeleteShare(req: Request, body: Record<string, unknown>): Promise<Response> {
+  const user = await userFromRequest(req);
+  if (!user) return json({ error: "Inicia sesión en ROCAS para eliminar esta cotización compartida." }, 401);
+  const shareId = str(body.shareId, 36, true);
+  if (!/^[0-9a-f-]{36}$/i.test(shareId)) return badRequest();
+  const now = new Date().toISOString();
+  const params = new URLSearchParams({ id: `eq.${shareId}`, user_id: `eq.${user.id}`, deleted_at: "is.null", select: "id" });
+  const rows = await db(`rocas_quote_shares?${params.toString()}`, {
+    method: "PATCH",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify({ deleted_at: now, revoked_at: now }),
+  }) as unknown[];
+  if (!Array.isArray(rows) || !rows.length) return json({ error: "No se encontró esa cotización compartida en tu cuenta." }, 404);
+  return json({ deleted: true, retainedForRecovery: true });
+}
+
+async function handleOwnerDeleteMessage(req: Request, body: Record<string, unknown>): Promise<Response> {
+  const user = await userFromRequest(req);
+  if (!user) return json({ error: "Inicia sesión en ROCAS para eliminar mensajes." }, 401);
+  const shareId = str(body.shareId, 36, true);
+  const messageId = str(body.messageId, 36, true);
+  if (!/^[0-9a-f-]{36}$/i.test(shareId) || !/^[0-9a-f-]{36}$/i.test(messageId)) return badRequest();
+  const ownedParams = new URLSearchParams({ id: `eq.${shareId}`, user_id: `eq.${user.id}`, deleted_at: "is.null", select: "id", limit: "1" });
+  const owned = await db(`rocas_quote_shares?${ownedParams.toString()}`) as unknown[];
+  if (!Array.isArray(owned) || !owned.length) return json({ error: "No se encontró esa cotización compartida en tu cuenta." }, 404);
+  const messageParams = new URLSearchParams({ id: `eq.${messageId}`, share_id: `eq.${shareId}`, deleted_at: "is.null", select: "id" });
+  const rows = await db(`rocas_quote_messages?${messageParams.toString()}`, {
+    method: "PATCH",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify({ deleted_at: new Date().toISOString() }),
+  }) as unknown[];
+  if (!Array.isArray(rows) || !rows.length) return json({ error: "No se encontró ese mensaje para esta cotización." }, 404);
+  return json({ deleted: true, retainedForRecovery: true });
+}
+
 async function handleRevoke(req: Request, body: Record<string, unknown>): Promise<Response> {
   const user = await userFromRequest(req);
   if (!user) return json({ error: "Inicia sesión en ROCAS para administrar el enlace." }, 401);
@@ -488,6 +535,8 @@ Deno.serve(async (req: Request): Promise<Response> => {
       case "client-message": return await handleClientMessage(body);
       case "owner-message": return await handleOwnerMessage(req, body);
       case "owner-list": return await handleOwnerList(req);
+      case "delete-share": return await handleOwnerDeleteShare(req, body);
+      case "delete-message": return await handleOwnerDeleteMessage(req, body);
       case "contract-load": return await handleContractLoad(req, body);
       case "contract-save": return await handleContractSave(req, body);
       case "revoke": return await handleRevoke(req, body);
