@@ -45,7 +45,13 @@ const authClient=window.supabase?.createClient(SUPABASE_URL,PUBLIC_KEY,{auth:{pe
 const $=id=>document.getElementById(id);let session=null;
 function status(text,error=false){$('authStatus').textContent=text;$('authStatus').className='status'+(error?' error':'')}
 function feedback(text,error=false){$('feedback').textContent=text;$('feedback').className='small'+(error?' error':'')}
-async function callApi(body){const r=await fetch(API,{method:'POST',headers:{apikey:PUBLIC_KEY,Authorization:'Bearer '+session.access_token,'Content-Type':'application/json'},body:JSON.stringify(body),cache:'no-store'});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'No se pudo completar la solicitud.');return d}
+async function callApi(body){
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);let r;
+  try{r=await fetch(API,{method:'POST',headers:{apikey:PUBLIC_KEY,Authorization:'Bearer '+session.access_token,'Content-Type':'application/json'},body:JSON.stringify(body),cache:'no-store',signal:controller.signal})}
+  catch(e){if(e?.name==='AbortError')throw new Error('La consulta tardó más de 15 segundos. Revisa la conexión e inténtalo de nuevo.');throw new Error('No se pudo conectar con el buzón. Revisa la conexión e inténtalo de nuevo.')}
+  finally{clearTimeout(timer)}
+  const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'No se pudo completar la solicitud.');return d
+}
 function authHelp(text,withLink=false){const box=$('authHelp');box.replaceChildren(document.createTextNode(text));if(withLink){const a=document.createElement('a');a.href='index.html';a.textContent=' Abrir el cotizador ROCAS';box.append(a)}}
 function showActiveSession(value){if(!value)return false;session=value;status('Sesión ROCAS activa');authHelp('Puedes revisar las cotizaciones compartidas y sus mensajes.');$('loginBox').classList.add('hidden');$('refreshBtn').disabled=false;setTimeout(()=>refreshShares(),0);return true}
 function showNoSession(){status('No hay sesión activa en este navegador.',true);authHelp('Puedes volver a comprobar o pedir un acceso al correo de tu cuenta.',true);$('loginBox').classList.remove('hidden');$('retrySessionBtn').classList.remove('hidden')}
@@ -63,7 +69,7 @@ async function verifySession(){
 }
 $('retrySessionBtn').addEventListener('click',verifySession);
 $('loginBtn').addEventListener('click',async()=>{const email=$('loginEmail').value.trim();if(!email){status('Escribe el correo de tu cuenta ROCAS.',true);$('loginEmail').focus();return}if(!authClient){status('No se pudo cargar el acceso.',true);return}$('loginBtn').disabled=true;$('loginBtn').textContent='Enviando…';status('Enviando enlace de acceso…');try{const {error}=await authClient.auth.signInWithOtp({email,options:{emailRedirectTo:new URL('./',location.href).href,shouldCreateUser:false}});if(error)throw error;status('Enlace enviado. Revisa tu correo.');authHelp('Abre el enlace recibido; volverá al cotizador ROCAS. Después regresa a este panel.')}catch(e){status('No se pudo enviar el enlace.',true);authHelp('Revisa el correo y vuelve a intentar.')}finally{$('loginBtn').disabled=false;$('loginBtn').textContent='Enviar enlace de acceso'}});
-$('refreshBtn').addEventListener('click',refreshShares);
+$('refreshBtn').addEventListener('click',()=>refreshShares(true));
 function hasPendingOwnerMessage(){return Array.from($('responseList').querySelectorAll('.thread-form textarea')).some(field=>field===document.activeElement||field.value.trim().length>0)}
 let seenOwnerIncomingIds=null;
 function announceOwnerInbox(responses,messages,shares){
@@ -111,11 +117,18 @@ async function deleteSharedQuote(share,button){
   try{await callApi({action:'delete-share',shareId:share.id});feedback('Cotización compartida eliminada. El presupuesto original sigue en el historial.');await refreshShares()}
   catch(e){feedback(e.message||'No se pudo eliminar el enlace.',true);button.disabled=false;button.textContent='Eliminar cotización compartida'}
 }
-async function refreshShares(){
-  if(!session)return;
+let refreshingShares=false;
+async function refreshShares(manual=false){
+  const refreshButton=$('refreshBtn');
+  if(!session){if(manual)feedback('La sesión de ROCAS no está activa en esta página.',true);return}
+  if(refreshingShares){if(manual)feedback('El buzón ya se está actualizando; espera unos segundos.');return}
+  refreshingShares=true;
+  if(manual){refreshButton.disabled=true;refreshButton.textContent='Actualizando…';feedback('Consultando mensajes y respuestas…')}
   try{
-    const d=await callApi({action:'owner-list'});announceOwnerInbox(d.responses||[],d.messages||[],d.shares||[]);if(hasPendingOwnerMessage())return;const rows=d.shares||[];const host=$('responseList');const pageX=window.scrollX,pageY=window.scrollY;host.replaceChildren();
-    if(!rows.length){const empty=document.createElement('div');empty.className='muted';empty.textContent='Aún no hay cotizaciones compartidas.';host.append(empty);requestAnimationFrame(()=>window.scrollTo(pageX,pageY));return}
+    const d=await callApi({action:'owner-list'});announceOwnerInbox(d.responses||[],d.messages||[],d.shares||[]);
+    if(hasPendingOwnerMessage()){if(manual)feedback('Consulta lista; conservé tu respuesta sin enviar.');return}
+    const rows=d.shares||[];const host=$('responseList');const pageX=window.scrollX,pageY=window.scrollY;host.replaceChildren();
+    if(!rows.length){const empty=document.createElement('div');empty.className='muted';empty.textContent='Aún no hay cotizaciones compartidas.';host.append(empty);requestAnimationFrame(()=>window.scrollTo(pageX,pageY));if(manual)feedback('Buzón actualizado. Aún no hay cotizaciones compartidas.');return}
     const resp=d.responses||[];const messages=d.messages||[];
     rows.forEach(s=>{
       const card=document.createElement('div');card.className='item';
@@ -129,7 +142,9 @@ async function refreshShares(){
       host.append(card)
     });
     requestAnimationFrame(()=>window.scrollTo(pageX,pageY));
+    if(manual){const clock=new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}),countText=rows.length===1?'1 cotización compartida revisada.':rows.length+' cotizaciones compartidas revisadas.';feedback('Buzón actualizado a las '+clock+'. '+countText)}
   }catch(e){feedback(e.message||'No se pudieron leer las respuestas.',true)}
+  finally{refreshingShares=false;if(manual){refreshButton.disabled=false;refreshButton.textContent='Actualizar mensajes'}}
 }
 verifySession();
 setInterval(()=>{if(session&&!document.hidden)refreshShares()},15000);
