@@ -102,7 +102,7 @@ $('sendBtn').addEventListener('click',async()=>{
 });
 $('chatSendBtn').addEventListener('click',async()=>{
   const respondentName=$('chatName').value.trim(),message=$('chatMessage').value.trim();
-  if(!respondentName){showChatStatus('Escribe tu nombre para iniciar el hilo.',false);$('chatName').focus();return}
+  if(!respondentName){showChatStatus('Escribe tu nombre para enviar un mensaje.',false);$('chatName').focus();return}
   if(!message){showChatStatus('Escribe un mensaje antes de enviarlo.',false);$('chatMessage').focus();return}
   $('chatSendBtn').disabled=true;$('chatSendBtn').textContent='Enviando…';
   try{await api({action:'client-message',token:shareToken,respondentName,message});sessionStorage.setItem('rocas_client_chat_name_'+activeShareId,respondentName);$('chatMessage').value='';showChatStatus('Mensaje enviado y guardado en esta cotización.');await refreshThread()}

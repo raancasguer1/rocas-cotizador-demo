@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<title>ROCAS · Mensajes de clientes</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--green:#145b55;--navy:#173b3a;--ink:#24312e;--muted:#64736e;--bg:#f3f6f4;--line:#dce5e0;--white:#fff;--mint:#e8f4f0;--gold:#8d641a;--pale:#fff6e3;--red:#9b3f37}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}.bar{background:var(--navy);color:#fff;padding:17px 20px}.brand{max-width:760px;margin:auto;font-weight:900;font-size:20px;letter-spacing:.04em}.brand small{display:block;color:#c7ddd7;font-size:11px;font-weight:500;letter-spacing:0}.wrap{max-width:760px;margin:22px auto;padding:0 15px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:19px;margin-bottom:14px;box-shadow:0 8px 24px rgba(21,58,52,.06)}.tag{display:inline-block;background:var(--pale);color:var(--gold);border-radius:99px;padding:5px 9px;font-size:10px;font-weight:900;letter-spacing:.04em}.title{font-size:22px;line-height:1.2;color:var(--navy);margin:11px 0 5px}.muted{color:var(--muted);font-size:13px}.btn{border:1px solid var(--green);border-radius:9px;padding:11px 14px;background:var(--green);color:#fff;font-weight:850;font-size:13px;cursor:pointer;margin:5px 6px 5px 0}.btn.alt{background:#fff;color:var(--green)}.btn.danger{background:#fff;color:var(--red);border-color:#e2c6c3}.btn:disabled{opacity:.45;cursor:not-allowed}.status{display:inline-block;background:var(--mint);color:var(--green);border-radius:99px;padding:6px 10px;font-size:11px;font-weight:850}.notice{background:var(--blue,#eaf2fc);border-radius:10px;padding:12px;font-size:12px;color:#294c75;margin-top:12px}.result{margin-top:12px;padding:12px;background:#f8faf8;border:1px solid var(--line);border-radius:10px;display:none;overflow-wrap:anywhere}.result.show{display:block}.result a{color:var(--green);font-weight:800;word-break:break-all}.list{display:grid;gap:9px;margin-top:12px}.item{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fbfcfb}.item strong{color:var(--navy)}.actions{margin-top:10px}.small{font-size:11px;color:var(--muted);margin-top:6px}.login-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-top:8px}.login-row input{flex:1;min-width:190px;border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit}.error{color:var(--red)}.hidden{display:none!important}.footer{text-align:center;color:var(--muted);font-size:11px;padding:5px 10px 24px}.thread{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}.thread-log{display:grid;gap:7px;max-height:240px;overflow:auto;margin:8px 0}.thread-msg{padding:9px;background:#f4f7f5;border:1px solid var(--line);border-radius:9px}.thread-msg.owner{background:var(--mint);border-color:#c9e2d7}.thread-meta{font-size:10px;color:var(--muted);font-weight:800;margin-bottom:3px}.thread-text{font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}.message-delete{display:block;margin-top:6px;padding:4px 8px!important;font-size:10px!important;color:var(--red)!important;background:#fff!important;border:1px solid #e2c6c3!important;border-radius:7px!important}.thread-form textarea{width:100%;min-height:65px;padding:9px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:12px;resize:vertical}.incoming-notice{position:fixed;z-index:1000;top:12px;left:50%;transform:translateX(-50%);width:min(92vw,640px);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:var(--mint);color:var(--green);border:1px solid #c9e2d7;border-radius:12px;box-shadow:0 8px 30px rgba(21,58,52,.22);font-weight:750;font-size:13px}.incoming-notice button{border:0;background:transparent;color:var(--green);font-size:18px;line-height:1;cursor:pointer;padding:4px 8px}
+</style>
+</head>
+<body>
+<header class="bar"><div class="brand">ROCAS<small>MENSAJES DE CLIENTES</small></div></header>
+<div id="incomingNotice" class="incoming-notice hidden" role="status" aria-live="polite"><span id="incomingNoticeText"></span><button id="dismissIncomingNotice" type="button" aria-label="Cerrar aviso">×</button></div>
+<main class="wrap">
+<section class="card">
+  <span class="tag">MENSAJES Y RESPUESTAS</span>
+  <h1 class="title">Mensajes de clientes</h1>
+  <p class="muted">Aquí revisas cotizaciones compartidas, respuestas y mensajes de cada cliente.</p>
+  
+  <div id="authStatus" class="status">Verificando sesión…</div>
+  <div id="authHelp" class="small">Comprobando la sesión de este navegador.</div>
+  <div id="loginBox" class="small hidden"><label for="loginEmail">Si no reconoce la sesión, pide un enlace de acceso al correo de tu cuenta ROCAS. No se enviará hasta que pulses el botón.</label><div class="login-row"><input id="loginEmail" type="email" autocomplete="email" placeholder="Correo de acceso"><button id="loginBtn" class="btn alt" type="button">Enviar enlace de acceso</button></div></div>
+  <div class="actions"><button id="refreshBtn" class="btn alt" type="button" disabled>Actualizar mensajes</button><button id="retrySessionBtn" class="btn alt hidden" type="button">Reintentar sesión</button></div>
+
+  <div id="feedback" class="small"></div>
+
+</section>
+<section class="card">
+  <h2 style="font-size:16px;color:var(--navy);margin:0">Cotizaciones compartidas</h2><p class="muted">Cada cotización aparece con su folio y el nombre del cliente. Para eliminarla, confirma y escribe el folio exacto. El presupuesto original no se borra.</p>
+  <div id="responseList" class="list"><div class="muted">Inicia sesión en el cotizador ROCAS para revisar el estado.</div></div>
+</section>
+<div class="footer"><a href="index.html">Volver al cotizador</a> · Eliminar un enlace no borra el presupuesto original del historial.</div>
+</main>
+<script>
+(()=>{
+const SUPABASE_URL='https://znveievywohgvqvsqtim.supabase.co';
+const PUBLIC_KEY='sb_publishable_52Db1WOmMQviCoAmP1S7tA_8UPzw_tP';
+const API=SUPABASE_URL+'/functions/v1/rocas-client-share';
+
+const authClient=window.supabase?.createClient(SUPABASE_URL,PUBLIC_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const $=id=>document.getElementById(id);let session=null;
+function status(text,error=false){$('authStatus').textContent=text;$('authStatus').className='status'+(error?' error':'')}
+function feedback(text,error=false){$('feedback').textContent=text;$('feedback').className='small'+(error?' error':'')}
+async function callApi(body){const r=await fetch(API,{method:'POST',headers:{apikey:PUBLIC_KEY,Authorization:'Bearer '+session.access_token,'Content-Type':'application/json'},body:JSON.stringify(body),cache:'no-store'});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'No se pudo completar la solicitud.');return d}
+function authHelp(text,withLink=false){const box=$('authHelp');box.replaceChildren(document.createTextNode(text));if(withLink){const a=document.createElement('a');a.href='index.html';a.textContent=' Abrir el cotizador ROCAS';box.append(a)}}
+function showActiveSession(value){if(!value)return false;session=value;status('Sesión ROCAS activa');authHelp('Puedes revisar las cotizaciones compartidas y sus mensajes.');$('loginBox').classList.add('hidden');$('refreshBtn').disabled=false;setTimeout(()=>refreshShares(),0);return true}
+function showNoSession(){status('No hay sesión activa en este navegador.',true);authHelp('Puedes volver a comprobar o pedir un acceso al correo de tu cuenta.',true);$('loginBox').classList.remove('hidden');$('retrySessionBtn').classList.remove('hidden')}
+if(authClient){authClient.auth.onAuthStateChange((event,value)=>{if(value)showActiveSession(value);else if(event==='INITIAL_SESSION'&&!session)showNoSession()})}
+async function verifySession(){
+  $('refreshBtn').disabled=true;$('retrySessionBtn').classList.add('hidden');
+  if(!authClient){status('No se pudo cargar el acceso.',true);authHelp('Recarga esta página para volver a intentarlo.');$('retrySessionBtn').classList.remove('hidden');return}
+  let timer;
+  try{
+    const result=await Promise.race([authClient.auth.getSession(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('timeout')),8000)})]);
+    clearTimeout(timer);const {data,error}=result;session=data?.session||null;
+    if(error||!session){showNoSession();return}
+    showActiveSession(session);
+  }catch(e){clearTimeout(timer);if(session){showActiveSession(session);return}status('No pude confirmar la sesión.',true);authHelp('También puedes pedir un enlace de acceso al correo de tu cuenta ROCAS.',true);$('loginBox').classList.remove('hidden');$('retrySessionBtn').classList.remove('hidden')}
+}
+$('retrySessionBtn').addEventListener('click',verifySession);
+$('loginBtn').addEventListener('click',async()=>{const email=$('loginEmail').value.trim();if(!email){status('Escribe el correo de tu cuenta ROCAS.',true);$('loginEmail').focus();return}if(!authClient){status('No se pudo cargar el acceso.',true);return}$('loginBtn').disabled=true;$('loginBtn').textContent='Enviando…';status('Enviando enlace de acceso…');try{const {error}=await authClient.auth.signInWithOtp({email,options:{emailRedirectTo:new URL('./',location.href).href,shouldCreateUser:false}});if(error)throw error;status('Enlace enviado. Revisa tu correo.');authHelp('Abre el enlace recibido; volverá al cotizador ROCAS. Después regresa a este panel.')}catch(e){status('No se pudo enviar el enlace.',true);authHelp('Revisa el correo y vuelve a intentar.')}finally{$('loginBtn').disabled=false;$('loginBtn').textContent='Enviar enlace de acceso'}});
+$('refreshBtn').addEventListener('click',refreshShares);
+function hasPendingOwnerMessage(){return Array.from($('responseList').querySelectorAll('.thread-form textarea')).some(field=>field===document.activeElement||field.value.trim().length>0)}
+let seenOwnerIncomingIds=null;
+function announceOwnerInbox(responses,messages,shares){
+  const responseEvents=(Array.isArray(responses)?responses:[]).filter(row=>row&&row.id).map(row=>({id:'response:'+row.id,shareId:row.share_id,kind:'respuesta',senderName:row.respondent_name}));
+  const messageEvents=(Array.isArray(messages)?messages:[]).filter(row=>row&&row.id&&row.sender_type==='client').map(row=>({id:'message:'+row.id,shareId:row.share_id,kind:'mensaje',senderName:row.sender_name}));
+  const events=[...responseEvents,...messageEvents];
+  if(seenOwnerIncomingIds===null){seenOwnerIncomingIds=new Set(events.map(event=>event.id));return}
+  const fresh=events.filter(event=>!seenOwnerIncomingIds.has(event.id));events.forEach(event=>seenOwnerIncomingIds.add(event.id));
+  if(!fresh.length)return;
+  const latest=fresh[fresh.length-1],share=(Array.isArray(shares)?shares:[]).find(item=>String(item.id)===String(latest.shareId));
+  const sender=latest.senderName||share?.client_name||'Cliente',folio=share?.quote_number?' · Folio '+share.quote_number:'';
+  $('incomingNoticeText').textContent=fresh.length===1?(latest.kind==='mensaje'?'Mensaje nuevo de ':'Respuesta nueva de ')+sender+folio+'.':'Tienes '+fresh.length+' novedades; la última es de '+sender+folio+'.';
+  $('incomingNotice').classList.remove('hidden');
+}
+$('dismissIncomingNotice').addEventListener('click',()=>$('incomingNotice').classList.add('hidden'));
+function renderOwnerThread(share,rows){
+  const box=document.createElement('div');box.className='thread';
+  const heading=document.createElement('strong');heading.textContent='Mensajes';box.append(heading);
+  const log=document.createElement('div');log.className='thread-log';log.setAttribute('role','log');log.setAttribute('aria-live','polite');
+  if(!rows.length){const empty=document.createElement('div');empty.className='small';empty.textContent='Aún no hay mensajes. Puedes enviar el primer mensaje aquí.';log.append(empty)}
+  for(const item of rows){const bubble=document.createElement('div');bubble.className='thread-msg'+(item.sender_type==='owner'?' owner':'');const meta=document.createElement('div');meta.className='thread-meta';const stamp=Date.parse(item.created_at||'');meta.textContent=(item.sender_type==='owner'?'ROCAS':item.sender_name||'Cliente')+(Number.isFinite(stamp)?' · '+new Date(stamp).toLocaleString('es-CO',{dateStyle:'short',timeStyle:'short'}):'');const text=document.createElement('div');text.className='thread-text';text.textContent=item.message||'';const remove=document.createElement('button');remove.type='button';remove.className='message-delete';remove.textContent='Eliminar mensaje';remove.setAttribute('aria-label','Eliminar este mensaje');remove.addEventListener('click',()=>deleteThreadMessage(share,item,remove));bubble.append(meta,text,remove);log.append(bubble)}
+  box.append(log);
+  const closed=!!share.revoked_at,expired=Date.parse(share.expires_at)<=Date.now();
+  if(!closed){
+    if(expired){const note=document.createElement('div');note.className='small';note.textContent='El enlace venció. Al responder, se renovará por 30 días para que el cliente pueda ver tu mensaje.';box.append(note)}
+    const form=document.createElement('div');form.className='thread-form';const input=document.createElement('textarea');input.maxLength=2000;input.placeholder='Escribe una respuesta para el cliente…';const send=document.createElement('button');send.className='btn alt';send.type='button';send.textContent='Responder como ROCAS';send.addEventListener('click',async()=>{const message=input.value.trim();if(!message){feedback('Escribe un mensaje antes de responder.',true);input.focus();return}if(Date.parse(share.expires_at)<=Date.now()&&!confirm('El enlace venció. Al enviar, volverá a estar disponible durante 30 días para que el cliente pueda ver tu respuesta. ¿Continuar?'))return;send.disabled=true;send.textContent='Enviando…';try{await callApi({action:'owner-message',shareId:share.id,message});input.value='';feedback('Mensaje enviado.');await refreshShares()}catch(e){feedback(e.message||'No se pudo enviar el mensaje.',true)}finally{send.disabled=false;send.textContent='Responder como ROCAS'}});form.append(input,send);box.append(form)
+  }else{const note=document.createElement('div');note.className='small';note.textContent='El enlace está cerrado. Puedes consultar los mensajes guardados, pero no enviar más.';box.append(note)}
+  return box;
+}
+async function deleteThreadMessage(share,message,button){
+  if(!session){feedback('Inicia sesión para eliminar mensajes.',true);return}
+  if(!confirm('¿Eliminar este mensaje de la cotización '+share.quote_number+'? Dejará de mostrarse para ROCAS y para el cliente; una copia queda guardada para recuperación.'))return;
+  const typed=prompt('Para confirmar, escribe ELIMINAR.');
+  if(typed===null||typed.trim()!=='ELIMINAR'){feedback('El mensaje se conservó; no se confirmó la eliminación.',true);return}
+  button.disabled=true;button.textContent='Eliminando…';
+  try{await callApi({action:'delete-message',shareId:share.id,messageId:message.id});feedback('Mensaje eliminado.');await refreshShares()}
+  catch(e){feedback(e.message||'No se pudo eliminar el mensaje.',true);button.disabled=false;button.textContent='Eliminar mensaje'}
+}
+async function deleteSharedQuote(share,button){
+  const folio=String(share.quote_number||'').trim(),clientName=String(share.client_name||'').trim();
+  if(!folio||!session){feedback('Inicia sesión para eliminar esta cotización compartida.',true);return}
+  const ok=confirm(`Eliminar el enlace de la cotización ${folio} de ${clientName}? El cliente perderá acceso. El presupuesto original seguirá en el historial de ROCAS; los mensajes quedan guardados para recuperación.`);
+  if(!ok)return;
+  const typed=prompt(`Protección contra borrado accidental: escribe exactamente el folio ${folio}.`);
+  if(typed===null||typed.trim()!==folio){feedback('No se eliminó: el folio no coincide.',true);return}
+  button.disabled=true;button.textContent='Eliminando…';
+  try{await callApi({action:'delete-share',shareId:share.id});feedback('Cotización compartida eliminada. El presupuesto original sigue en el historial.');await refreshShares()}
+  catch(e){feedback(e.message||'No se pudo eliminar el enlace.',true);button.disabled=false;button.textContent='Eliminar cotización compartida'}
+}
+async function refreshShares(){
+  if(!session)return;
+  try{
+    const d=await callApi({action:'owner-list'});announceOwnerInbox(d.responses||[],d.messages||[],d.shares||[]);if(hasPendingOwnerMessage())return;const rows=d.shares||[];const host=$('responseList');const pageX=window.scrollX,pageY=window.scrollY;host.replaceChildren();
+    if(!rows.length){const empty=document.createElement('div');empty.className='muted';empty.textContent='Aún no hay cotizaciones compartidas.';host.append(empty);requestAnimationFrame(()=>window.scrollTo(pageX,pageY));return}
+    const resp=d.responses||[];const messages=d.messages||[];
+    rows.forEach(s=>{
+      const card=document.createElement('div');card.className='item';
+      const title=document.createElement('strong');title.textContent='Cotización '+s.quote_number+' · '+s.client_name;
+      const meta=document.createElement('div');meta.className='small';meta.textContent='Revisión '+s.quote_revision+' · '+(s.revoked_at?'Enlace cerrado':new Date(s.expires_at)<new Date()?'Enlace vencido':'Enlace activo');card.append(title,meta);
+      const related=resp.filter(r=>r.share_id===s.id);
+      if(related.length){related.forEach(r=>{const line=document.createElement('div');line.className='small';const labels={accepted:'Aceptó',change_request:'Pidió un cambio',question:'Hizo una consulta',rejected:'No aceptó'};line.textContent=(labels[r.response_type]||'Respuesta')+' · '+r.respondent_name+(r.message?': '+r.message:'');card.append(line)})}
+      else{const none=document.createElement('div');none.className='small';none.textContent='Sin respuesta todavía.';card.append(none)}
+      card.append(renderOwnerThread(s,messages.filter(m=>m.share_id===s.id)));
+      const remove=document.createElement('button');remove.className='btn danger';remove.type='button';remove.textContent='Eliminar cotización compartida';remove.title='Se requiere confirmar y escribir el folio exacto';remove.addEventListener('click',()=>deleteSharedQuote(s,remove));card.append(remove);
+      host.append(card)
+    });
+    requestAnimationFrame(()=>window.scrollTo(pageX,pageY));
+  }catch(e){feedback(e.message||'No se pudieron leer las respuestas.',true)}
+}
+verifySession();
+setInterval(()=>{if(session&&!document.hidden)refreshShares()},15000);
+})();
+</script>
+<script>
+setTimeout(()=>{const s=document.getElementById('authStatus');if(s&&s.textContent.startsWith('Verificando')){s.textContent='La sesión sigue pendiente.';s.className='status error';const h=document.getElementById('authHelp');if(h)h.textContent='Puedes reintentar o pedir un enlace de acceso al correo de tu cuenta ROCAS.';document.getElementById('loginBox')?.classList.remove('hidden');document.getElementById('retrySessionBtn')?.classList.remove('hidden')}},10000);
+</script>
+</body>
+</html>
