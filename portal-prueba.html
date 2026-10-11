@@ -78,16 +78,15 @@ $('refreshBtn').addEventListener('click',refreshShares);
 function hasPendingOwnerMessage(){return Array.from($('responseList').querySelectorAll('.thread-form textarea')).some(field=>field===document.activeElement||field.value.trim().length>0)}
 let seenOwnerIncomingIds=null;
 function announceOwnerInbox(responses,messages,shares){
-  const responseEvents=(Array.isArray(responses)?responses:[]).filter(row=>row&&row.id).map(row=>({id:'response:'+row.id,shareId:row.share_id,kind:'respuesta'}));
-  const messageEvents=(Array.isArray(messages)?messages:[]).filter(row=>row&&row.id&&row.sender_type==='client').map(row=>({id:'message:'+row.id,shareId:row.share_id,kind:'mensaje'}));
+  const responseEvents=(Array.isArray(responses)?responses:[]).filter(row=>row&&row.id).map(row=>({id:'response:'+row.id,shareId:row.share_id,kind:'respuesta',senderName:row.respondent_name}));
+  const messageEvents=(Array.isArray(messages)?messages:[]).filter(row=>row&&row.id&&row.sender_type==='client').map(row=>({id:'message:'+row.id,shareId:row.share_id,kind:'mensaje',senderName:row.sender_name}));
   const events=[...responseEvents,...messageEvents];
   if(seenOwnerIncomingIds===null){seenOwnerIncomingIds=new Set(events.map(event=>event.id));return}
   const fresh=events.filter(event=>!seenOwnerIncomingIds.has(event.id));events.forEach(event=>seenOwnerIncomingIds.add(event.id));
   if(!fresh.length)return;
   const latest=fresh[fresh.length-1],share=(Array.isArray(shares)?shares:[]).find(item=>String(item.id)===String(latest.shareId));
-  const folio=share?.quote_number?' · Folio '+share.quote_number:'';const messageCount=fresh.filter(event=>event.kind==='mensaje').length,responseCount=fresh.filter(event=>event.kind==='respuesta').length;
-  const parts=[];if(messageCount)parts.push(messageCount===1?'un mensaje nuevo':messageCount+' mensajes nuevos');if(responseCount)parts.push(responseCount===1?'una respuesta nueva':responseCount+' respuestas nuevas');
-  $('incomingNoticeText').textContent='Tienes '+parts.join(' y ')+' de clientes'+folio+'.';
+  const sender=latest.senderName||share?.client_name||'Cliente',folio=share?.quote_number?' · Folio '+share.quote_number:'';
+  $('incomingNoticeText').textContent=fresh.length===1?(latest.kind==='mensaje'?'Mensaje nuevo de ':'Respuesta nueva de ')+sender+folio+'.':'Tienes '+fresh.length+' novedades; la última es de '+sender+folio+'.';
   $('incomingNotice').classList.remove('hidden');
 }
 $('dismissIncomingNotice').addEventListener('click',()=>$('incomingNotice').classList.add('hidden'));
